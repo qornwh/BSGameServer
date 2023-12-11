@@ -1,0 +1,17 @@
+
+# .vscode, CoreLib, GameBS 이외 전부 제외
+.remove/
+.VisualStudio_wins_code/
+build/
+lib/
+
+# CoreLib *.cpp, *.h, Makefile 이외 전부 제외
+CoreLib/*
+!CoreLib/*.cpp
+!CoreLib/*.h
+!CoreLib/Makefile
+
+# GameBS *.cpp, *.h 이외 전부 제외
+GameBS/*
+!GameBS/*.cpp
+!GameBS/*.h

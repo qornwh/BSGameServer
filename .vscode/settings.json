@@ -1,0 +1,13 @@
+{
+  "files.associations": {
+    "*.json": "jsonc",
+    "ostream": "cpp",
+    "unordered_map": "cpp",
+    "array": "cpp",
+    "tuple": "cpp",
+    "utility": "cpp",
+    "iostream": "cpp",
+    "atomic": "cpp"
+  },
+  "cmake.configureOnOpen": true
+}

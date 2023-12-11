@@ -1,0 +1,58 @@
+{
+  "configurations": [
+    {
+      "name": "빌드용",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${fileDirname}/${fileBasenameNoExtension}",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+          {
+              "description": "gdb에 자동 서식 지정 사용",
+              "text": "-enable-pretty-printing",
+              "ignoreFailures": true
+          },
+          {
+              "description": "디스어셈블리 버전을 Intel(으)로 설정",
+              "text": "-gdb-set disassembly-flavor intel",
+              "ignoreFailures": true
+          }
+      ],
+      "preLaunchTask": "C/C++: g++ 활성 파일 빌드",
+      "miDebuggerPath": "/usr/bin/gdb"
+    },
+
+    {
+      "name": "make Debug",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/GameBS/main",
+      "args": [],
+      "stopAtEntry": true,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      //"setupCommands": [
+      //  {
+      //    "description": "gdb에 자동 서식 지정 사용",
+      //    "text": "-enable-pretty-printing",
+      //    "ignoreFailures": true
+      //  },
+      //  {
+      //    "description": "디스어셈블리 버전을 Intel(으)로 설정",
+      //    "text": "-gdb-set disassembly-flavor intel",
+      //    "ignoreFailures": true
+      //  }
+      //],
+      "preLaunchTask": "make Debug"
+      //"miDebuggerPath": "/usr/bin/gdb"
+    }
+  ],
+  "version": "2.0.0"
+}
