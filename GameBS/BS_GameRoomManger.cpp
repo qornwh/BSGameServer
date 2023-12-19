@@ -15,7 +15,7 @@ BS_GameRoomManger::~BS_GameRoomManger()
 
 void BS_GameRoomManger::CreateRoom()
 {
-	// µğÆúÆ®¿ë ¸Ê »ı¼º
+	// roomìƒì„±
 	GameRoomRef room = make_shared<BS_GameRoom>(_id);
 	_roomMap[_id] = room;
 	_id.fetch_add(1);

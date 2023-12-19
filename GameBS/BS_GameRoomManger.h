@@ -6,13 +6,13 @@ using GameRoomRef = shared_ptr<class BS_GameRoom>;
 
 class BS_GameRoomManger : public enable_shared_from_this<BS_GameRoomManger>
 {
+public:
 	enum RoomType
 	{
 		space, // 지역
 		paty,	 // 파티
 	};
 
-public:
 	BS_GameRoomManger();
 	~BS_GameRoomManger();
 	void CreateRoom();

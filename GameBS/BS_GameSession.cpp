@@ -67,12 +67,12 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 		// 일단 정리필요
 		int offset = sizeof(PacketHeader);
 
-		uint16 *idLen = PacketUtils::ReadBufferPtr<uint16>(buffer, offset);
+		uint16 *nameLen = PacketUtils::ReadBufferPtr<uint16>(buffer, offset);
 
-		BYTE *id = PacketUtils::ReadBufferStr(buffer, offset, *idLen);
+		BYTE *name = PacketUtils::ReadBufferStr(buffer, offset, *nameLen);
 
 		CreatePlayerInfo();
-		getPlayer()->SetName(id, *idLen);
+		getPlayer()->SetName(name, *nameLen);
 
 		// 현재 접속된 모든 정보 전달. // 일단 gameroom에 넣어야된다. 락땜에
 		{
