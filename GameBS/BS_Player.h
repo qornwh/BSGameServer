@@ -20,11 +20,12 @@ public:
 	~BS_Player_Info();
 
 public:
-	void SetName(BYTE *id, uint16 &idLen);
+	void SetName(BYTE *name, uint16 &nameLen);
 	void SetNameLen(uint16 nameLen);
 	// void SetPw(BYTE* pw, uint16& pwLen);
 	void SetPosition(FVector &position);
 	void SetPosition(int32 X, int32 Y, int32 Z);
+	void SetPosition(int32 X, int32 Y, int32 Z, float Yaw);
 	void SetType(uint16 type);
 
 	// BYTE* GetId() { return _id; }

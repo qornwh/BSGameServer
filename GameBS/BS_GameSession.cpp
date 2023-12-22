@@ -67,17 +67,14 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 		// 일단 정리필요
 		int offset = sizeof(PacketHeader);
 
+		uint16 *type = PacketUtils::ReadBufferPtr<uint16>(buffer, offset);
 		uint16 *nameLen = PacketUtils::ReadBufferPtr<uint16>(buffer, offset);
 
 		BYTE *name = PacketUtils::ReadBufferStr(buffer, offset, *nameLen);
 
-		uint16 *type = PacketUtils::ReadBufferPtr<uint16>(buffer, offset);
-
 		CreatePlayerInfo();
 		getPlayer()->SetName(name, *nameLen);
 		getPlayer()->SetType(*type);
-		cout << " nameLen : " << *nameLen << endl;
-		cout << " type : " << getPlayer()->GetType() << endl;
 
 		// 현재 접속된 모든 정보 전달. // 일단 gameroom에 넣어야된다. 락땜에
 		{
@@ -162,7 +159,7 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 
 		SendBufferRef sendBuffer = BS_PacketHandler::MakePacket(pkt);
 		GetService()->Broadcast(sendBuffer, getSocketFd());
-		getPlayer()->SetPosition(Position->X, Position->Y, Position->Z);
+		getPlayer()->SetPosition(Position->X, Position->Y, Position->Z, Position->Yaw);
 	}
 	break;
 	case 4:
