@@ -99,7 +99,7 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 						player.Position.X = info->GetPosition().X;
 						player.Position.Y = info->GetPosition().Y;
 						player.Position.Z = info->GetPosition().Z;
-						player.Position.Yew = info->GetPosition().Yew;
+						player.Position.Yaw = info->GetPosition().Yaw;
 						player.NameLen = info->GetNameLen();
 						player.Name = info->GetName();
 						pkt.players.push_back(player);
@@ -156,7 +156,7 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 		pkt.Position.X = Position->X;
 		pkt.Position.Y = Position->Y;
 		pkt.Position.Z = Position->Z;
-		pkt.Position.Yew = Position->Yew;
+		pkt.Position.Yaw = Position->Yaw;
 
 		// std::cout << " code : " << pkt.Code << " x : " << pkt.Position.X << " y : " << pkt.Position.Y << std::endl;
 

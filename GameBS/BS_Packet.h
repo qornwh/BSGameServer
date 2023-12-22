@@ -8,7 +8,7 @@ namespace BS_Protocol
 		int32 X;
 		int32 Y;
 		int32 Z;
-		float Yew;
+		float Yaw;
 
 		int32 size()
 		{
@@ -123,6 +123,18 @@ namespace BS_Protocol
 		int32 size()
 		{
 			return sizeof(int32);
+		}
+	};
+
+	struct BS_ATTACK_PLAYER
+	{
+		int32 Code;
+
+		uint16 SkillCode;
+
+		int32 size()
+		{
+			return sizeof(BS_ATTACK_PLAYER);
 		}
 	};
 }

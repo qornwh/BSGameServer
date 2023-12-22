@@ -91,7 +91,7 @@ public:
 			bw.Write(&player.Position.X);
 			bw.Write(&player.Position.Y);
 			bw.Write(&player.Position.Z);
-			bw.Write(&player.Position.Yew);
+			bw.Write(&player.Position.Yaw);
 			bw.Write(&player.NameLen);
 			bw.Write(player.Name, player.NameLen);
 		}
@@ -124,7 +124,7 @@ public:
 		bw.Write(&pkt.Position.X);
 		bw.Write(&pkt.Position.Y);
 		bw.Write(&pkt.Position.Z);
-		bw.Write(&pkt.Position.Yew);
+		bw.Write(&pkt.Position.Yaw);
 		return sendBuffer;
 	}
 

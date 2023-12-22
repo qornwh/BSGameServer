@@ -5,12 +5,12 @@
 
 struct FVector
 {
-	FVector(int32 X, int32 Y, int32 Z, float Yew) : X(X), Y(Y), Z(Z), Yew(Yew){};
+	FVector(int32 X, int32 Y, int32 Z, float Yaw) : X(X), Y(Y), Z(Z), Yaw(Yaw){};
 
 	int32 X;
 	int32 Y;
 	int32 Z;
-	float Yew;
+	float Yaw;
 };
 
 class BS_Player_Info : public enable_shared_from_this<BS_Player_Info>
