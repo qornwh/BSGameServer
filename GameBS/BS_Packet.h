@@ -130,7 +130,7 @@ namespace BS_Protocol
 	{
 		int32 Code;
 
-		uint16 SkillCode;
+		int32 SkillCode;
 
 		int32 size()
 		{

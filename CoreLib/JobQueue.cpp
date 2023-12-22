@@ -15,12 +15,12 @@ void JobQueue::Push(JobRef job)
 	{
 		if (!_isThreadUsed)
 		{
-			// �ٷ� ť�� ������ Execute
+			// 사용중 아닐경우 바로 Execute
 			Execute();
 		}
 		else
 		{
-			// �۷ι� ť�� ��� ���߿� ����
+			// 사용중일경우 다른스레드로 넘기기 위해 글로벌 변수에 추가 구현 필요
 		}
 	}
 }

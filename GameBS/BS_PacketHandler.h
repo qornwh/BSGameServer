@@ -158,13 +158,25 @@ public:
 	}
 
 	// 유저 종료 메시지
-	static SendBufferRef MakeMyPacket(BS_Protocol::BS_CLOSE_PLAYER &pkt)
+	static SendBufferRef MakePacket(BS_Protocol::BS_CLOSE_PLAYER &pkt)
 	{
 		const uint16 dataSize = pkt.size();
 		SendBufferRef sendBuffer = MakeSendBuffer(dataSize, 6);
 
 		BufferWrite bw(sendBuffer->Buffer() + sizeof(PacketHeader), dataSize);
 		bw.Write(&pkt.Code);
+		return sendBuffer;
+	}
+
+	// 유저 스킬 메시지
+	static SendBufferRef MakePacket(BS_Protocol::BS_ATTACK_PLAYER &pkt)
+	{
+		const uint16 dataSize = pkt.size();
+		SendBufferRef sendBuffer = MakeSendBuffer(dataSize, 7);
+
+		BufferWrite bw(sendBuffer->Buffer() + sizeof(PacketHeader), dataSize);
+		bw.Write(&pkt.Code);
+		bw.Write(&pkt.SkillCode);
 		return sendBuffer;
 	}
 

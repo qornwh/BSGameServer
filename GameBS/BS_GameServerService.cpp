@@ -79,7 +79,7 @@ void BS_GameServerService::ReleaseSessionMesssage(SessionRef session)
 			BS_Protocol::BS_CLOSE_PLAYER pkt;
 			pkt.Code = session->getSocketFd();
 
-			SendBufferRef sendBuffer = BS_PacketHandler::MakeMyPacket(pkt);
+			SendBufferRef sendBuffer = BS_PacketHandler::MakePacket(pkt);
 
 			JobRef job = make_shared<Job>(&BS_GameRoom::BroadcastAnother, room, sendBuffer, session->getSocketFd());
 			room->PushJobQueue(job);

@@ -186,9 +186,24 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 		}
 	}
 	break;
-	case 5:
+	case 7:
 	{
 		// 공격
+		int offset = sizeof(PacketHeader);
+		int32 *SkillCode = PacketUtils::ReadBufferPtr<int32>(buffer, offset);
+
+		BS_Protocol::BS_ATTACK_PLAYER pkt;
+
+		pkt.Code = getSocketFd();
+		pkt.SkillCode = *SkillCode;
+
+		shared_ptr<BS_GameRoom> room = GBSRoomManger->getRoom(0);
+		if (room != nullptr)
+		{
+			SendBufferRef sendBuffer = BS_PacketHandler::MakePacket(pkt);
+			JobRef job = make_shared<Job>(&BS_GameRoom::Broadcast, room, sendBuffer);
+			room->PushJobQueue(job);
+		}
 	}
 	break;
 	default:
