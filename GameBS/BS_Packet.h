@@ -76,8 +76,8 @@ namespace BS_Protocol
 
 	struct Player
 	{
-		Player(uint8 Type, uint8 Hp, uint32 Code) : Type(Type), Hp(Hp), Code(Code) {}
-		uint8 Type;
+		Player(uint16 Type, uint8 Hp, uint32 Code) : Type(Type), Hp(Hp), Code(Code) {}
+		uint16 Type;
 		uint8 Hp;
 		uint32 Code;
 		FVector Position;
@@ -88,7 +88,7 @@ namespace BS_Protocol
 
 		int32 size()
 		{
-			return sizeof(uint8) * 2 + sizeof(uint32) + sizeof(FVector) + sizeof(uint16) + sizeof(Name);
+			return sizeof(uint8) + sizeof(uint32) + sizeof(FVector) + sizeof(uint16) * 2 + sizeof(Name);
 		}
 	};
 

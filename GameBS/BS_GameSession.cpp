@@ -71,8 +71,13 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 
 		BYTE *name = PacketUtils::ReadBufferStr(buffer, offset, *nameLen);
 
+		uint16 *type = PacketUtils::ReadBufferPtr<uint16>(buffer, offset);
+
 		CreatePlayerInfo();
 		getPlayer()->SetName(name, *nameLen);
+		getPlayer()->SetType(*type);
+		cout << " nameLen : " << *nameLen << endl;
+		cout << " type : " << getPlayer()->GetType() << endl;
 
 		// 현재 접속된 모든 정보 전달. // 일단 gameroom에 넣어야된다. 락땜에
 		{
@@ -182,6 +187,11 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 			JobRef job = make_shared<Job>(&BS_GameRoom::Broadcast, room, sendBuffer);
 			room->PushJobQueue(job);
 		}
+	}
+	break;
+	case 5:
+	{
+		// 공격
 	}
 	break;
 	default:

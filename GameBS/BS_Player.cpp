@@ -12,7 +12,7 @@ BS_Player_Info::~BS_Player_Info()
 	cout << "close player info" << endl;
 }
 
-void BS_Player_Info::SetName(BYTE* id, uint16& idLen)
+void BS_Player_Info::SetName(BYTE *id, uint16 &idLen)
 {
 	_name = new BYTE[idLen];
 	memcpy(_name, id, idLen);
@@ -24,12 +24,12 @@ void BS_Player_Info::SetNameLen(uint16 nameLen)
 	_nameLen = nameLen;
 }
 
-//void BS_Player_Info::SetPw(BYTE* pw, uint16& pwLen)
+// void BS_Player_Info::SetPw(BYTE* pw, uint16& pwLen)
 //{
 //	memcpy(_pw, pw, pwLen);
-//}
+// }
 
-void BS_Player_Info::SetPosition(FVector& position)
+void BS_Player_Info::SetPosition(FVector &position)
 {
 	_position.X = position.X;
 	_position.Y = position.Y;
@@ -41,4 +41,9 @@ void BS_Player_Info::SetPosition(int32 X, int32 Y, int32 Z)
 	_position.X = X;
 	_position.Y = Y;
 	_position.Z = Z;
+}
+
+void BS_Player_Info::SetType(uint16 type)
+{
+	_type = type;
 }

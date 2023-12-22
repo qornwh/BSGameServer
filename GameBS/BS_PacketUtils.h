@@ -19,7 +19,9 @@ T *PacketUtils::ReadBufferPtr(BYTE *buffer, int &offset)
   return temp;
 }
 
-BYTE *PacketUtils::ReadBufferStr(BYTE *buffer, int &ptr, uint32 len)
+BYTE *PacketUtils::ReadBufferStr(BYTE *buffer, int &offset, uint32 len)
 {
-  return &buffer[ptr];
+  int tempOffset = offset;
+  offset += len;
+  return &buffer[tempOffset];
 }
