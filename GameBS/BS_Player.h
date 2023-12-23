@@ -13,38 +13,36 @@ struct FVector
 	float Yaw;
 };
 
-class BS_Player_Info : public enable_shared_from_this<BS_Player_Info>
+class BS_Unit_Info : public enable_shared_from_this<BS_Unit_Info>
 {
 public:
-	BS_Player_Info(int socketFd);
-	~BS_Player_Info();
+	BS_Unit_Info(int32 uuid);
+	~BS_Unit_Info();
 
 public:
 	void SetName(BYTE *name, uint16 &nameLen);
 	void SetNameLen(uint16 nameLen);
-	// void SetPw(BYTE* pw, uint16& pwLen);
 	void SetPosition(FVector &position);
 	void SetPosition(int32 X, int32 Y, int32 Z);
 	void SetPosition(int32 X, int32 Y, int32 Z, float Yaw);
 	void SetType(uint16 type);
+	void SetHp(int32 hp);
 
-	// BYTE* GetId() { return _id; }
-	// BYTE* GetPw() { return _pw; }
 	BYTE *GetName() { return _name; }
-	BYTE GetCode() { return _uuid; }
+	int32 GetCode() { return _uuid; }
 	uint16 GetType() { return _type; }
 	BYTE GetHp() { return _hp; }
 	BYTE GetNameLen() { return _nameLen; }
 	FVector &GetPosition() { return _position; }
 
-private:
-	int _socketFd;
+	void HitUnit(int32 Damage);
+	bool DieUnit();
+	void SetSpawn(bool spawnd);
+	bool IsSpawned() { return _isSpawned; }
 
-private:
-	// BYTE _id[10];
-	// BYTE _pw[10];
+protected:
 	BYTE *_name;
-	BYTE _uuid;
+	int32 _uuid;
 
 	uint16 _nameLen;
 
@@ -52,5 +50,34 @@ private:
 	uint16 _type;
 
 	FVector _position{0, 0, 0, 0};
-	// uuid 필요
+
+	// 처음생성하면 스폰되어야 되므로 true로 둔다!!!
+	bool _isSpawned = true;
+};
+
+// 일단 socketFilediscriptor와 uuid 는 같이간다.
+class BS_Player_Info : public BS_Unit_Info
+{
+public:
+	BS_Player_Info(int32 socketFd);
+	//~BS_Player_Info();
+
+private:
+	int32 _socketFd;
+};
+
+// 일단 uuid 는 음의 정수로 간다.
+class BS_Monster_Info : public BS_Unit_Info
+{
+public:
+	BS_Monster_Info(int32 uuid);
+	//~BS_Monster_Info();
+
+	void SetSpawnPosition(int32 startX, int32 startY);
+
+	void SetInfo(uint16 type, int32 hp);
+
+private:
+	int32 _startX = 0;
+	int32 _startY = 0;
 };

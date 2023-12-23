@@ -8,15 +8,9 @@
 #include "../CoreLib/ThreadManager.h"
 
 #include "../CoreLib/Pch.h"
+#include "../CoreLib/Utils.h"
 
 #include "BS_GameServerService.h"
-
-void worker(ServerSock *serverSock)
-{
-	while (1)
-	{
-	}
-}
 
 int main()
 {
@@ -28,7 +22,7 @@ int main()
 	{
 		ThreadManager::GetInstance().CreateThread([&serverRef]()
 																							{
-			while (true)
+			while (1)
 			{
 				serverRef->Dispatch();
 			} });
@@ -37,6 +31,13 @@ int main()
 	{
 		serverRef->Dispatch();
 	}
+
+	// 몬스터 구현
+	// 0. 리눅스 타이머 구현 - OK
+	// 0. 맵 지정
+	// 1. 몬스터들의 이동은, 500ms마다 이동된 좌표들을 클라이언트로 던져 본다.
+	// 2. 몬스터들의 Hp 피격시 데미지 계산 구현
+	// 3. 몬스터들의 Hp 피격 데미지 클라전송.
 
 	serverRef->reSet();
 

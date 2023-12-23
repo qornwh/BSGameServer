@@ -3,7 +3,7 @@
 # 컴파일러 설정
 CC = g++
 # 컴파일러 플래그 설정
-CFLAGS = -Wall
+CFLAGS = -c -Wall
 # 라이브러리 파일 이름 설정
 LIBRARY_NAME = libcore.a
 
@@ -48,5 +48,5 @@ clean:
 	rm -rf $(BUILD_DIR)
 
 # 실행 파일 생성
-executable: $(OBJECTS)
-	$(CC) $^ -o $(BUILD_DIR)/your_executable_name
+#  executable: $(OBJECTS)
+# 	$(CC) $^ -o $(BUILD_DIR)/your_executable_name
