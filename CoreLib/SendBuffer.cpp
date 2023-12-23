@@ -59,7 +59,7 @@ SendBufferRef SendBufferManager::Open(uint32 size)
 
 	ASSERT_CRASH(LSendBufferChunk->IsOpen() == false);
 
-	// ´Ù ›§À¸¸é ¹ö¸®°í »õ°Å·Î ±³Ã¼
+	// ê¸°ì¡´ì˜ SendBufferChunkì˜ í¬ê¸°ê°€ í•„ìš”í•œ sizeë³´ë‹¤ ìž‘ìœ¼ë©´ ìƒˆë¡œ í• ë‹¹
 	if (LSendBufferChunk->FreeSize() < size)
 	{
 		LSendBufferChunk = Pop(); // WRITE_LOCK
