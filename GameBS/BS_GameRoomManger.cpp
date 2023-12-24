@@ -29,5 +29,8 @@ void BS_GameRoomManger::EreaseRoom(int32 id)
 
 GameRoomRef BS_GameRoomManger::getRoom(int32 id)
 {
-	return _roomMap[id];
+	if (_roomMap.find(id) != _roomMap.end())
+		return _roomMap[id];
+	else
+		return nullptr;
 }

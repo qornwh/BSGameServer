@@ -9,8 +9,11 @@
 
 #include "../CoreLib/Pch.h"
 #include "../CoreLib/Utils.h"
+#include "../CoreLib/Job.h"
 
 #include "BS_GameServerService.h"
+#include "BS_GameRoom.h"
+#include "BS_GameRoomManger.h"
 
 int main()
 {
@@ -25,11 +28,25 @@ int main()
 			while (1)
 			{
 				serverRef->Dispatch();
+
+				// 일단 임시로 여기서 처리 한다.
+				shared_ptr<BS_GameRoom> room = GBSRoomManger->getRoom(0);
+				if (room != nullptr)
+				{
+					room->RoomTask();
+				}
 			} });
 	}
 	while (1)
 	{
 		serverRef->Dispatch();
+
+		// 일단 임시로 여기서 처리 한다.
+		shared_ptr<BS_GameRoom> room = GBSRoomManger->getRoom(0);
+		if (room != nullptr)
+		{
+			room->RoomTask();
+		}
 	}
 
 	// 몬스터 구현

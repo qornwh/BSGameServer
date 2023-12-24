@@ -77,7 +77,9 @@ public:
 	static SendBufferRef MakePacket(BS_Protocol::BS_LOAD_DATA &pkt)
 	{
 		uint16 playerSize = pkt.players.size();
-		const uint16 dataSize = pkt.size() + playerSize;
+		uint16 monsterSize = pkt.monsters.size();
+		// const uint16 dataSize = pkt.size() + playerSize + monsterSize; // 안필요해 보임 playerSize + monsterSize
+		const uint16 dataSize = pkt.size();
 		SendBufferRef sendBuffer = MakeSendBuffer(dataSize, 1);
 
 		BufferWrite bw(sendBuffer->Buffer() + sizeof(PacketHeader), dataSize);
@@ -94,6 +96,20 @@ public:
 			bw.Write(&player.Position.Yaw);
 			bw.Write(&player.NameLen);
 			bw.Write(player.Name, player.NameLen);
+		}
+
+		bw.Write(&monsterSize);
+		for (auto monster : pkt.monsters)
+		{
+			bw.Write(&monster.Type);
+			bw.Write(&monster.Hp);
+			bw.Write(&monster.Code);
+			bw.Write(&monster.Position.X);
+			bw.Write(&monster.Position.Y);
+			bw.Write(&monster.Position.Z);
+			bw.Write(&monster.Position.Yaw);
+			bw.Write(&monster.NameLen);
+			bw.Write(monster.Name, monster.NameLen);
 		}
 		return sendBuffer;
 	}
@@ -177,6 +193,27 @@ public:
 		BufferWrite bw(sendBuffer->Buffer() + sizeof(PacketHeader), dataSize);
 		bw.Write(&pkt.Code);
 		bw.Write(&pkt.SkillCode);
+		return sendBuffer;
+	}
+
+	// 몬스터 이동 메시지
+	static SendBufferRef MakePacket(BS_Protocol::BS_C_MOVE_LIST &pkt)
+	{
+		uint16 moveSize = pkt.moveList.size();
+		const uint16 dataSize = pkt.size() + moveSize;
+		SendBufferRef sendBuffer = MakeSendBuffer(dataSize, 1);
+
+		BufferWrite bw(sendBuffer->Buffer() + sizeof(PacketHeader), dataSize);
+
+		bw.Write(&moveSize);
+		for (auto unit : pkt.moveList)
+		{
+			bw.Write(&unit.Code);
+			bw.Write(&unit.Position.X);
+			bw.Write(&unit.Position.Y);
+			bw.Write(&unit.Position.Z);
+			bw.Write(&unit.Position.Yaw);
+		}
 		return sendBuffer;
 	}
 

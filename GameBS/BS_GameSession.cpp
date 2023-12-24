@@ -76,6 +76,7 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 		getPlayer()->SetName(name, *nameLen);
 		getPlayer()->SetType(*type);
 
+		shared_ptr<BS_GameRoom> room = GBSRoomManger->getRoom(0);
 		// 현재 접속된 모든 정보 전달. // 일단 gameroom에 넣어야된다. 락땜에
 		{
 			BS_Protocol::BS_LOAD_DATA pkt;
@@ -103,6 +104,25 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 					}
 				}
 			}
+
+			for (auto &iter : room->GetMonsterMap())
+			{
+				auto info = iter.second;
+				if (info->IsSpawned())
+				{
+					BS_Protocol::Monster monster{info->GetType(), info->GetHp(), info->GetCode()};
+					monster.Type = info->GetType();
+					monster.Hp = info->GetHp();
+					monster.Code = info->GetCode();
+					monster.Position.X = info->GetPosition().X;
+					monster.Position.Y = info->GetPosition().Y;
+					monster.Position.Z = info->GetPosition().Z;
+					monster.Position.Yaw = info->GetPosition().Yaw;
+					monster.NameLen = info->GetNameLen();
+					monster.Name = info->GetName();
+					pkt.monsters.push_back(monster);
+				}
+			}
 			SendBufferRef sendBuffer = BS_PacketHandler::MakePacket(pkt);
 			Send(sendBuffer);
 			cout << "send packet data size : " << pkt.size() + sizeof(PacketHeader) << endl;
@@ -128,7 +148,6 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 				Send(sendBuffer);
 			}
 
-			shared_ptr<BS_GameRoom> room = GBSRoomManger->getRoom(0);
 			if (room != nullptr)
 			{
 				JobRef job = make_shared<Job>(&BS_GameRoom::AddSession, room, static_pointer_cast<BS_GameSession>(shared_from_this()));

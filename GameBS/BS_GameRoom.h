@@ -1,5 +1,6 @@
 #pragma once
 
+#include <random>
 #include "../CoreLib/JobQueue.h"
 
 class BS_GameRoom : public JobQueue
@@ -22,7 +23,9 @@ public:
 	void SpanMoster();
 	void MoveMoster();
 
-	void MapTask();
+	void RoomTask();
+
+	unordered_map<int32, shared_ptr<class BS_Monster_Info>> GetMonsterMap();
 
 private:
 	void InitMapInfo();
@@ -45,4 +48,6 @@ private:
 	random_device rd;
 	mt19937 gen;
 	uniform_int_distribution<int> disRotate{-180, 180};
+
+	Atomic<bool> isLoopTask{false};
 };

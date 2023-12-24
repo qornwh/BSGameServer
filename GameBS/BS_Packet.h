@@ -55,6 +55,21 @@ namespace BS_Protocol
 		}
 	};
 
+	struct BS_C_MOVE_LIST
+	{
+		vector<BS_C_MOVE> moveList;
+
+		int32 size()
+		{
+			int32 _size = 0;
+			for (auto move : moveList)
+			{
+				_size += sizeof(move);
+			}
+			return _size + sizeof(uint16);
+		}
+	};
+
 	struct BS_C_CHAT
 	{
 		uint32 Code;
@@ -70,8 +85,20 @@ namespace BS_Protocol
 
 	struct Monster
 	{
-		uint8 Type;
+		Monster(uint16 Type, uint8 Hp, uint32 Code) : Type(Type), Hp(Hp), Code(Code) {}
+		uint16 Type;
 		uint8 Hp;
+		uint32 Code;
+		FVector Position;
+
+		// 이름
+		uint16 NameLen;
+		BYTE *Name;
+
+		int32 size()
+		{
+			return sizeof(uint8) + sizeof(uint32) + sizeof(FVector) + sizeof(uint16) * 2 + sizeof(Name);
+		}
 	};
 
 	struct Player
@@ -102,7 +129,7 @@ namespace BS_Protocol
 	// [ 1005 123123 1100 5 dfskfieowenv 1101 1 dsfsdfewf ]
 	struct BS_LOAD_DATA
 	{
-		// vector<Monster> monsters;
+		vector<Monster> monsters;
 		vector<Player> players;
 		// MapData mapData;
 		int32 size()
@@ -112,7 +139,13 @@ namespace BS_Protocol
 			{
 				_size += sizeof(player);
 			}
-			return _size + sizeof(uint16);
+
+			int32 _size2 = 0;
+			for (auto monster : monsters)
+			{
+				_size2 += sizeof(monster);
+			}
+			return _size + _size2 + sizeof(uint16) * 2;
 		}
 	};
 

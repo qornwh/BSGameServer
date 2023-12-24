@@ -9,7 +9,17 @@ class Job
 public:
     using Func = std::function<void()>;
 
-    Job(Func &&orgFunc) : _func(std::move(orgFunc)) {}
+    // Job(Func &&orgFunc) : _func(std::move(orgFunc)) {}
+
+    // no params
+    template <typename T>
+    Job(void (T::*funcPtr)(), std::shared_ptr<T> instance)
+    {
+        _func = [funcPtr, instance]
+        {
+            (instance.get()->*funcPtr)();
+        };
+    }
 
     // 여러 파라미터 처리
     // template<typename T, typename... Args>
