@@ -1,6 +1,5 @@
 #include "BS_GameRoom.h"
 #include "BS_Player.h"
-#include "../CoreLib/PlayerInfo.h"
 #include "../CoreLib/Utils.h"
 #include "BS_GameSession.h"
 #include "BS_MapInfo.h"
@@ -125,10 +124,10 @@ void BS_GameRoom::MoveMoster()
 		auto info = iter.second;
 		if (info->IsSpawned())
 		{
-			int32 rot = disRotate(gen);
-			int32 x = info->GetPosition().X * (cosf(rot));
-			int32 y = info->GetPosition().Y * (sinf(rot));
-			info->SetPosition(x, y, info->GetPosition().Z);
+			int32 Yaw = disRotate(gen);
+			int32 X = info->GetPosition().X + (500 * (cosf(Yaw)));
+			int32 Y = info->GetPosition().Y + (500 * (sinf(Yaw)));
+			info->SetPosition(X, Y, info->GetPosition().Z, Yaw);
 			BS_Protocol::BS_C_MOVE childPkt;
 			childPkt.Code = info->GetCode();
 			childPkt.Position.X = info->GetPosition().X;
@@ -153,10 +152,11 @@ void BS_GameRoom::RoomTask()
 		bool curLoopTask = isLoopTask.load();
 		if (!curLoopTask && isLoopTask.compare_exchange_strong(curLoopTask, true))
 		{
-			_tickTime = FunctionUtils::TimeUtils::GetTickCount64_OS();
 			SpanMoster();
 			MoveMoster();
 			// 여기서 이제 클라한테 모두 뿌려줘야되
+			_tickTime = FunctionUtils::TimeUtils::GetTickCount64_OS();
+			isLoopTask.exchange(false);
 		}
 	}
 }

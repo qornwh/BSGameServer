@@ -9,7 +9,6 @@
 #include "BS_GameSession.h"
 #include "BS_Packet.h"
 #include "BS_PacketHandler.h"
-#include "../CoreLib/PlayerInfo.h"
 #include "../CoreLib/Job.h"
 #include "BS_GameRoom.h"
 #include "BS_GameRoomManger.h"
@@ -167,12 +166,15 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 
 		FVector *Position = PacketUtils::ReadBufferPtr<FVector>(buffer, offset);
 
-		BS_Protocol::BS_C_MOVE pkt;
-		pkt.Code = getSocketFd();
-		pkt.Position.X = Position->X;
-		pkt.Position.Y = Position->Y;
-		pkt.Position.Z = Position->Z;
-		pkt.Position.Yaw = Position->Yaw;
+		BS_Protocol::BS_C_MOVE_LIST pkt;
+
+		BS_Protocol::BS_C_MOVE childPkt;
+		childPkt.Code = getSocketFd();
+		childPkt.Position.X = Position->X;
+		childPkt.Position.Y = Position->Y;
+		childPkt.Position.Z = Position->Z;
+		childPkt.Position.Yaw = Position->Yaw;
+		pkt.moveList.emplace_back(childPkt);
 
 		// std::cout << " code : " << pkt.Code << " x : " << pkt.Position.X << " y : " << pkt.Position.Y << std::endl;
 

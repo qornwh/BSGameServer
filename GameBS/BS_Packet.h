@@ -46,7 +46,7 @@ namespace BS_Protocol
 	// 1001 500 123 10 10 10
 	struct BS_C_MOVE
 	{
-		uint32 Code;
+		int32 Code;
 		FVector Position;
 
 		int32 size()

@@ -129,18 +129,24 @@ public:
 		return sendBuffer;
 	}
 
-	// 유저 이동 메시지
-	static SendBufferRef MakePacket(BS_Protocol::BS_C_MOVE &pkt)
+	// 이동 메시지
+	static SendBufferRef MakePacket(BS_Protocol::BS_C_MOVE_LIST &pkt)
 	{
+		uint16 moveSize = pkt.moveList.size();
 		const uint16 dataSize = pkt.size();
 		SendBufferRef sendBuffer = MakeSendBuffer(dataSize, 3);
 
 		BufferWrite bw(sendBuffer->Buffer() + sizeof(PacketHeader), dataSize);
-		bw.Write(&pkt.Code);
-		bw.Write(&pkt.Position.X);
-		bw.Write(&pkt.Position.Y);
-		bw.Write(&pkt.Position.Z);
-		bw.Write(&pkt.Position.Yaw);
+
+		bw.Write(&moveSize);
+		for (auto unit : pkt.moveList)
+		{
+			bw.Write(&unit.Code);
+			bw.Write(&unit.Position.X);
+			bw.Write(&unit.Position.Y);
+			bw.Write(&unit.Position.Z);
+			bw.Write(&unit.Position.Yaw);
+		}
 		return sendBuffer;
 	}
 
@@ -193,27 +199,6 @@ public:
 		BufferWrite bw(sendBuffer->Buffer() + sizeof(PacketHeader), dataSize);
 		bw.Write(&pkt.Code);
 		bw.Write(&pkt.SkillCode);
-		return sendBuffer;
-	}
-
-	// 몬스터 이동 메시지
-	static SendBufferRef MakePacket(BS_Protocol::BS_C_MOVE_LIST &pkt)
-	{
-		uint16 moveSize = pkt.moveList.size();
-		const uint16 dataSize = pkt.size() + moveSize;
-		SendBufferRef sendBuffer = MakeSendBuffer(dataSize, 1);
-
-		BufferWrite bw(sendBuffer->Buffer() + sizeof(PacketHeader), dataSize);
-
-		bw.Write(&moveSize);
-		for (auto unit : pkt.moveList)
-		{
-			bw.Write(&unit.Code);
-			bw.Write(&unit.Position.X);
-			bw.Write(&unit.Position.Y);
-			bw.Write(&unit.Position.Z);
-			bw.Write(&unit.Position.Yaw);
-		}
 		return sendBuffer;
 	}
 
