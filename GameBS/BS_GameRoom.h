@@ -47,7 +47,7 @@ private:
 
 	random_device rd;
 	mt19937 gen;
-	uniform_int_distribution<int> disRotate{0, 360};
+	uniform_int_distribution<int> disRotate{-20, 20};
 
 	Atomic<bool> isLoopTask{false};
 };
