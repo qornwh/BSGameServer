@@ -21,6 +21,7 @@ BS_GameRoom::BS_GameRoom(int roomId) : _roomId(roomId), _tickTime(FunctionUtils:
 		int32 startX = disX(gen);
 		int32 startY = disY(gen);
 		shared_ptr<BS_Monster_Info> info = make_shared<BS_Monster_Info>(uuid);
+		info->SetType(10 + (uuid % 5) * (-1));
 		info->SetSpawnPosition(startX, startY);
 		info->SetPosition(startX, startY, 0);
 
