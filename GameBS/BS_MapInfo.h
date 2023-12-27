@@ -41,6 +41,7 @@ public:
 	~BS_MapInfo();
 
 	bool InRect(int32 x, int32 y, Rect &rect);
+	void InMonsterRect(int32 &x, int32 &y);
 
 	Rect &GetMap() { return _mapInfo; }
 	Rect &GetMosterMap() { return _monsterInfo; }

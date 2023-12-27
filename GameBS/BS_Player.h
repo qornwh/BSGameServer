@@ -80,4 +80,7 @@ public:
 private:
 	int32 _startX = 0;
 	int32 _startY = 0;
+
+private:
+	int32 _targetPlayerUUid; // 공격할 대상
 };

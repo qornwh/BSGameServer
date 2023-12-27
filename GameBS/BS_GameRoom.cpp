@@ -23,7 +23,7 @@ BS_GameRoom::BS_GameRoom(int roomId) : _roomId(roomId), _tickTime(FunctionUtils:
 		shared_ptr<BS_Monster_Info> info = make_shared<BS_Monster_Info>(uuid);
 		info->SetType(10 + (uuid % 5) * (-1));
 		info->SetSpawnPosition(startX, startY);
-		info->SetPosition(startX, startY, 0);
+		info->SetPosition(startX, startY, 100);
 
 		wstring name(L"몬스터");
 		name.append(std::to_wstring(uuid));
@@ -126,8 +126,9 @@ void BS_GameRoom::MoveMoster()
 		if (info->IsSpawned())
 		{
 			int32 Yaw = disRotate(gen);
-			int32 X = info->GetPosition().X + (500 * (cosf(Yaw)));
-			int32 Y = info->GetPosition().Y + (500 * (sinf(Yaw)));
+			int32 X = info->GetPosition().X + (250 * (cosf(Yaw)));
+			int32 Y = info->GetPosition().Y + (250 * (sinf(Yaw)));
+			_mapInfo->InMonsterRect(X, Y);
 			info->SetPosition(X, Y, info->GetPosition().Z, Yaw);
 			BS_Protocol::BS_C_MOVE childPkt;
 			childPkt.Code = info->GetCode();
@@ -155,7 +156,7 @@ void BS_GameRoom::RoomTask()
 		{
 			SpanMoster();
 			MoveMoster();
-			// 여기서 이제 클라한테 모두 뿌려줘야되
+			//  여기서 이제 클라한테 모두 뿌려줘야되
 			_tickTime = FunctionUtils::TimeUtils::GetTickCount64_OS();
 			isLoopTask.exchange(false);
 		}
