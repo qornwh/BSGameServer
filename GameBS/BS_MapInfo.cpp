@@ -39,7 +39,7 @@ void BS_MapInfo::InMonsterRect(int32 &x, int32 &y)
 
 bool BS_MapInfo::InRect(int32 x, int32 y, Rect &rect)
 {
-  if (rect.StartX() < x && rect.EndX() > x && rect.StartY() > y && rect.EndY() < y)
+  if (rect.StartX() < x && rect.EndX() > x && rect.StartY() < y && rect.EndY() > y)
     return true;
 
   return false;

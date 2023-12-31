@@ -82,7 +82,7 @@ public:
 	bool OnTarget(shared_ptr<BS_Player_Info> playerInfo, shared_ptr<class BS_MapInfo> mapInfo);
 
 	// 공격 가능 범위까지 이동(회전 부터, astar)
-	void MoveTarget(FVector &targetPosition);
+	bool MoveTarget(FVector &targetPosition);
 	// 공격 가능 범위 체크
 	bool CheckAttackTarget(FVector &targetPosition);
 	// 공격

@@ -7,7 +7,7 @@
 #include <random>
 #include "BS_PacketHandler.h"
 
-BS_GameRoom::BS_GameRoom(int roomId) : _roomId(roomId), _tickTime(FunctionUtils::TimeUtils::GetTickCount64_OS()), JobQueue()
+BS_GameRoom::BS_GameRoom(int roomId) : _roomId(roomId), _tickTime(FunctionUtils::Utils::GetTickCount64_OS()), JobQueue()
 {
 	InitMapInfo();
 
@@ -90,12 +90,12 @@ void BS_GameRoom::PushJobQueue(JobRef job)
 
 void BS_GameRoom::SetTickCountRoom()
 {
-	_tickTime = FunctionUtils::TimeUtils::GetTickCount64_OS();
+	_tickTime = FunctionUtils::Utils::GetTickCount64_OS();
 }
 
 uint64 BS_GameRoom::GetTickCountRoom()
 {
-	return FunctionUtils::TimeUtils::GetTickCount64_OS() - _tickTime;
+	return FunctionUtils::Utils::GetTickCount64_OS() - _tickTime;
 }
 
 void BS_GameRoom::InitMapInfo()
@@ -125,13 +125,30 @@ void BS_GameRoom::MoveMoster()
 		auto info = iter.second;
 		if (info->IsSpawned())
 		{
-			if (info->GetAttackPlayerUUid() > 0 && info->OnTarget(_sessionMap[info->GetAttackPlayerUUid()]->getPlayer(), _mapInfo))
+			if (info->GetAttackPlayerUUid() > 0 && _sessionMap.find(info->GetAttackPlayerUUid()) != _sessionMap.end() && info->OnTarget(_sessionMap[info->GetAttackPlayerUUid()]->getPlayer(), _mapInfo))
 			{
 				// 타깃 추적
 				shared_ptr<BS_Player_Info> playerInfo = _sessionMap[info->GetAttackPlayerUUid()]->getPlayer();
-				cout << "target : " << info->GetAttackPlayerUUid() << endl;
 
-				info->MoveTarget(playerInfo->GetPosition());
+				bool IsAttacking = info->MoveTarget(playerInfo->GetPosition());
+				if (IsAttacking)
+				{
+					// 공격 성공시 타겟 초기화s
+					// info->SetAttackPlayerUUid(-1);
+
+					cout << "공격 성공 : " << info->GetAttackPlayerUUid() << endl;
+					continue;
+				}
+				else
+				{
+					BS_Protocol::BS_C_MOVE childPkt;
+					childPkt.Code = info->GetCode();
+					childPkt.Position.X = info->GetPosition().X;
+					childPkt.Position.Y = info->GetPosition().Y;
+					childPkt.Position.Z = info->GetPosition().Z;
+					childPkt.Position.Yaw = info->GetPosition().Yaw;
+					pkt.moveList.push_back(childPkt);
+				}
 			}
 			else
 			{
@@ -166,7 +183,7 @@ void BS_GameRoom::RoomTask()
 {
 	// 스레드 루프 돌때 한번 MakeTask한다
 	// 갱신타임 500ms에 한번씩 체크해서 스폰이랑 몬스터 움직이도록 한다.
-	uint64 tick = FunctionUtils::TimeUtils::GetTickCount64_OS();
+	uint64 tick = FunctionUtils::Utils::GetTickCount64_OS();
 	if (tick - _tickTime > _taskTime)
 	{
 		bool curLoopTask = isLoopTask.load();
@@ -175,7 +192,7 @@ void BS_GameRoom::RoomTask()
 			SpanMoster();
 			MoveMoster();
 			//  여기서 이제 클라한테 모두 뿌려줘야되
-			_tickTime = FunctionUtils::TimeUtils::GetTickCount64_OS();
+			_tickTime = FunctionUtils::Utils::GetTickCount64_OS();
 			isLoopTask.exchange(false);
 		}
 	}
@@ -192,6 +209,7 @@ void BS_GameRoom::MonsterHit(SendBufferRef sendBuffer, int32 MonsterCode, int32 
 	{
 		// 일단 몬스터 히트될때 경직시간은 나중 이동될 거리를 줄이는것으로 간다.
 		_monsterMap[MonsterCode]->SetMoving(false);
+		_monsterMap[MonsterCode]->SetAttackPlayerUUid(socketFd);
 		BroadcastAnother(sendBuffer, socketFd);
 	}
 }
