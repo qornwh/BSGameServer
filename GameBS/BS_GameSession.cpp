@@ -227,6 +227,26 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 		}
 	}
 	break;
+	case 8:
+	{
+		// 플레이어 공격 -> 몬스터 히트
+		int offset = sizeof(PacketHeader);
+		int32 *Code = PacketUtils::ReadBufferPtr<int32>(buffer, offset);
+
+		BS_Protocol::BS_HIT_MONSTER pkt;
+
+		pkt.Code = getSocketFd();
+		pkt.MonsterCode = *Code;
+
+		shared_ptr<BS_GameRoom> room = GBSRoomManger->getRoom(0);
+		if (room != nullptr)
+		{
+			SendBufferRef sendBuffer = BS_PacketHandler::MakePacket(pkt);
+			JobRef job = make_shared<Job>(&BS_GameRoom::MonsterHit, room, sendBuffer, *Code, getSocketFd());
+			room->PushJobQueue(job);
+		}
+	}
+	break;
 	default:
 		break;
 	}

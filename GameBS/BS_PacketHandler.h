@@ -202,6 +202,18 @@ public:
 		return sendBuffer;
 	}
 
+	// 몬스터 히트 메시지
+	static SendBufferRef MakePacket(BS_Protocol::BS_HIT_MONSTER &pkt)
+	{
+		const uint16 dataSize = pkt.size();
+		SendBufferRef sendBuffer = MakeSendBuffer(dataSize, 8);
+
+		BufferWrite bw(sendBuffer->Buffer() + sizeof(PacketHeader), dataSize);
+		bw.Write(&pkt.Code);
+		bw.Write(&pkt.MonsterCode);
+		return sendBuffer;
+	}
+
 	// 헤더
 	static SendBufferRef MakeSendBuffer(uint16 dataSize, uint16 pktId)
 	{

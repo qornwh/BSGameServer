@@ -77,10 +77,25 @@ public:
 
 	void SetInfo(uint16 type, int32 hp);
 
+	void SetAttackPlayerUUid(int32 uuid);
+	int32 GetAttackPlayerUUid();
+	bool OnTarget(shared_ptr<BS_Player_Info> playerInfo, shared_ptr<class BS_MapInfo> mapInfo);
+
+	// 공격 가능 범위까지 이동(회전 부터, astar)
+	void MoveTarget(FVector &targetPosition);
+	// 공격 가능 범위 체크
+	bool CheckAttackTarget(FVector &targetPosition);
+	// 공격
+	void AttackTarget();
+
+	void SetMoving(bool isMoving);
+	bool IsMoving();
+
 private:
 	int32 _startX = 0;
 	int32 _startY = 0;
+	bool _moving = true;
 
 private:
-	int32 _targetPlayerUUid; // 공격할 대상
+	int32 _targetPlayerUUid = -1; // 공격할 대상
 };

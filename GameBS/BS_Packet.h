@@ -170,4 +170,16 @@ namespace BS_Protocol
 			return sizeof(BS_ATTACK_PLAYER);
 		}
 	};
+
+	struct BS_HIT_MONSTER
+	{
+		int32 Code;
+
+		int32 MonsterCode;
+
+		int32 size()
+		{
+			return sizeof(BS_HIT_MONSTER);
+		}
+	};
 }

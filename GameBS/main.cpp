@@ -27,14 +27,14 @@ int main()
 																							{
 			while (1)
 			{
-				serverRef->Dispatch();
+				//serverRef->Dispatch();
 
-				// 일단 임시로 여기서 처리 한다.
-				shared_ptr<BS_GameRoom> room = GBSRoomManger->getRoom(0);
-				if (room != nullptr)
-				{
-					room->RoomTask();
-				}
+				//// 일단 임시로 여기서 처리 한다.
+				//shared_ptr<BS_GameRoom> room = GBSRoomManger->getRoom(0);
+				//if (room != nullptr)
+				//{
+				//	room->RoomTask();
+				//}
 			} });
 	}
 	while (1)

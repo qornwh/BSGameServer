@@ -26,6 +26,7 @@ public:
 	void RoomTask();
 
 	unordered_map<int32, shared_ptr<class BS_Monster_Info>> GetMonsterMap();
+	void MonsterHit(SendBufferRef sendBuffer, int32 MonsterCode, int32 socketFd);
 
 private:
 	void InitMapInfo();

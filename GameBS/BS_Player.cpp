@@ -1,4 +1,5 @@
 #include "BS_Player.h"
+#include "BS_MapInfo.h"
 
 BS_Unit_Info::BS_Unit_Info(int32 uuid) : _uuid(uuid)
 {
@@ -82,6 +83,74 @@ void BS_Monster_Info::SetInfo(uint16 type, int32 hp)
 {
 	SetType(type);
 	SetHp(hp);
+}
+
+void BS_Monster_Info::SetAttackPlayerUUid(int32 uuid)
+{
+	_targetPlayerUUid = uuid;
+}
+
+void BS_Monster_Info::MoveTarget(FVector &targetPosition)
+{
+	if (CheckAttackTarget(targetPosition))
+	{
+		// 먼저 공격 범위 내에 있으면 공격
+		AttackTarget();
+	}
+	else
+	{
+		// 플레이어 위치 까지 이동 250. astar
+		// 영역을 쪼개서 구간별로 나눠서 구간자체를 벽으로 설정해야될듯함!!!
+		// 쪼개는 기준이 어떻게 될것인가???? 되나?? // 그전에 쪼갤때 간격 100x100 여기에 유닛 들어감
+		int X = GetPosition().X;
+		int Y = GetPosition().Y;
+		float Yaw = GetPosition().Yaw;
+
+		// 변형된 astar를 생각해본다.
+		// 케이스 1 : 바로 직선으로 이동할경우 벽이 체크되지 않으면 바로 이동.
+		// 케이스 2 : 만약 최선거리에서 벽을 마주할 경우, (좌or우)상단 (좌or우)하단. 으로 이동한다.
+
+		// 9 칸으로 나눠 본다.
+		// 벽인지 체크는 ??
+		int TopX = X + 200;
+		int BottomX = X - 200;
+		int TopY = Y + 200;
+		int BottomY = Y - 200;
+	}
+}
+
+bool BS_Monster_Info::CheckAttackTarget(FVector &targetPosition)
+{
+	return false;
+}
+
+void BS_Monster_Info::AttackTarget()
+{
+}
+
+void BS_Monster_Info::SetMoving(bool isMoving)
+{
+	_moving = isMoving;
+}
+
+bool BS_Monster_Info::IsMoving()
+{
+	return _moving;
+}
+
+int32 BS_Monster_Info::GetAttackPlayerUUid()
+{
+	return _targetPlayerUUid;
+}
+
+bool BS_Monster_Info::OnTarget(shared_ptr<BS_Player_Info> playerInfo, shared_ptr<BS_MapInfo> mapInfo)
+{
+	// 일단 여기에 타겟 체크도 둔다.
+	if (_targetPlayerUUid > -1)
+	{
+		return mapInfo->InRect(playerInfo->GetPosition().X, playerInfo->GetPosition().Y, mapInfo->GetMosterMap());
+	}
+	return false;
 }
 
 void BS_Monster_Info::SetSpawnPosition(int32 startX, int32 startY)

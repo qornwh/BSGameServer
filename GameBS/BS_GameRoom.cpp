@@ -125,18 +125,36 @@ void BS_GameRoom::MoveMoster()
 		auto info = iter.second;
 		if (info->IsSpawned())
 		{
-			int32 Yaw = disRotate(gen);
-			int32 X = info->GetPosition().X + (250 * (cosf(Yaw)));
-			int32 Y = info->GetPosition().Y + (250 * (sinf(Yaw)));
-			_mapInfo->InMonsterRect(X, Y);
-			info->SetPosition(X, Y, info->GetPosition().Z, Yaw);
-			BS_Protocol::BS_C_MOVE childPkt;
-			childPkt.Code = info->GetCode();
-			childPkt.Position.X = info->GetPosition().X;
-			childPkt.Position.Y = info->GetPosition().Y;
-			childPkt.Position.Z = info->GetPosition().Z;
-			childPkt.Position.Yaw = info->GetPosition().Yaw;
-			pkt.moveList.push_back(childPkt);
+			if (info->GetAttackPlayerUUid() > 0 && info->OnTarget(_sessionMap[info->GetAttackPlayerUUid()]->getPlayer(), _mapInfo))
+			{
+				// 타깃 추적
+				shared_ptr<BS_Player_Info> playerInfo = _sessionMap[info->GetAttackPlayerUUid()]->getPlayer();
+				cout << "target : " << info->GetAttackPlayerUUid() << endl;
+
+				info->MoveTarget(playerInfo->GetPosition());
+			}
+			else
+			{
+				if (info->IsMoving())
+				{
+					int32 Yaw = disRotate(gen);
+					int32 X = info->GetPosition().X + (250 * (cosf(Yaw)));
+					int32 Y = info->GetPosition().Y + (250 * (sinf(Yaw)));
+					_mapInfo->InMonsterRect(X, Y);
+					info->SetPosition(X, Y, info->GetPosition().Z, Yaw);
+					BS_Protocol::BS_C_MOVE childPkt;
+					childPkt.Code = info->GetCode();
+					childPkt.Position.X = info->GetPosition().X;
+					childPkt.Position.Y = info->GetPosition().Y;
+					childPkt.Position.Z = info->GetPosition().Z;
+					childPkt.Position.Yaw = info->GetPosition().Yaw;
+					pkt.moveList.push_back(childPkt);
+				}
+				else
+				{
+					info->SetMoving(true);
+				}
+			}
 		}
 	}
 
@@ -166,4 +184,14 @@ void BS_GameRoom::RoomTask()
 unordered_map<int32, shared_ptr<class BS_Monster_Info>> BS_GameRoom::GetMonsterMap()
 {
 	return _monsterMap;
+}
+
+void BS_GameRoom::MonsterHit(SendBufferRef sendBuffer, int32 MonsterCode, int32 socketFd)
+{
+	if (_monsterMap.find(MonsterCode) != _monsterMap.end())
+	{
+		// 일단 몬스터 히트될때 경직시간은 나중 이동될 거리를 줄이는것으로 간다.
+		_monsterMap[MonsterCode]->SetMoving(false);
+		BroadcastAnother(sendBuffer, socketFd);
+	}
 }
