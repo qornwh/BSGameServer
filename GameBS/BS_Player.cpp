@@ -126,7 +126,7 @@ bool BS_Monster_Info::MoveTarget(FVector &targetPosition)
 
 		_position.X = targetPosition.X;
 		_position.Y = targetPosition.Y;
-		_position.Yaw += theta;
+		_position.Yaw = targetPosition.Yaw;
 		return false;
 	}
 }
@@ -134,18 +134,27 @@ bool BS_Monster_Info::MoveTarget(FVector &targetPosition)
 bool BS_Monster_Info::CheckAttackTarget(FVector &targetPosition)
 {
 	// 일단 범위 하드코딩 => 나중에 공격 스킬 범위를 지정해둔다.. 그럼따라서 파라미터 추가 필요할듯
-	const int x = 200; // 범위
-	const int y = 300; // 범위
-	int startX = _position.X - abs((x * (cos(45))));
-	int endX = _position.X + abs((x * (cos(45))));
-	int startY = _position.Y - abs((y * (sin(45))));
-	int endY = _position.Y + abs((y * (sin(45))));
-	cout << "target : " << targetPosition.X << " : " << targetPosition.Y << endl;
-	cout << "check " << startX << ", " << endX << ", " << startY << ", " << endY << endl;
-	if (startX <= targetPosition.X && targetPosition.X <= endX && startY <= targetPosition.Y && targetPosition.Y <= endY)
-	{
+	// 범위를 임의의점 4개로 생각하면 계산로직이 커지기 때문에 좌표이동을 해서 직각 사각형을 만들어서 생각한다.
+
+	// 언리얼 포워드벡터는 (1,0,0) 즉 x축이다
+
+	const int32 targetX = targetPosition.X - _position.X;
+	const int32 targetY = targetPosition.Y - _position.Y;
+	const float targetXY = sqrt(pow(targetX, 2) + pow(targetY, 2)); // 빗변
+
+	const float newTargetX = cosf(_position.Yaw) * targetXY; // 변환된 타겟 좌표 x
+	const float newTargetY = sinf(_position.Yaw) * targetXY; // 변환된 타겟 좌표 y
+
+	const int x = 100; // 탐색 범위
+	const int y = 500; // 탐색 범위
+	const int startX = -x / 2;
+	const int endX = x / 2;
+	const int startY = -y / 2;
+	const int endY = y / 2;
+
+	if (startX <= newTargetX && newTargetX <= endX && startY <= newTargetY && newTargetY <= endY)
 		return true;
-	}
+
 	return false;
 }
 

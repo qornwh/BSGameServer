@@ -139,39 +139,30 @@ void BS_GameRoom::MoveMoster()
 					cout << "공격 성공 : " << info->GetAttackPlayerUUid() << endl;
 					continue;
 				}
-				else
-				{
-					BS_Protocol::BS_C_MOVE childPkt;
-					childPkt.Code = info->GetCode();
-					childPkt.Position.X = info->GetPosition().X;
-					childPkt.Position.Y = info->GetPosition().Y;
-					childPkt.Position.Z = info->GetPosition().Z;
-					childPkt.Position.Yaw = info->GetPosition().Yaw;
-					pkt.moveList.push_back(childPkt);
-				}
+
+				cout << "playerInfo : " << playerInfo->GetPosition().X << ", " << playerInfo->GetPosition().Y << ", " << playerInfo->GetPosition().Yaw << endl;
+				cout << "몬스터 : " << info->GetPosition().X << ", " << info->GetPosition().Y << ", " << info->GetPosition().Yaw << endl;
+			}
+			if (info->IsMoving())
+			{
+				int32 Yaw = disRotate(gen);
+				int32 X = info->GetPosition().X + (250 * (cosf(Yaw)));
+				int32 Y = info->GetPosition().Y + (250 * (sinf(Yaw)));
+				_mapInfo->InMonsterRect(X, Y);
+				info->SetPosition(X, Y, info->GetPosition().Z, Yaw);
 			}
 			else
 			{
-				if (info->IsMoving())
-				{
-					int32 Yaw = disRotate(gen);
-					int32 X = info->GetPosition().X + (250 * (cosf(Yaw)));
-					int32 Y = info->GetPosition().Y + (250 * (sinf(Yaw)));
-					_mapInfo->InMonsterRect(X, Y);
-					info->SetPosition(X, Y, info->GetPosition().Z, Yaw);
-					BS_Protocol::BS_C_MOVE childPkt;
-					childPkt.Code = info->GetCode();
-					childPkt.Position.X = info->GetPosition().X;
-					childPkt.Position.Y = info->GetPosition().Y;
-					childPkt.Position.Z = info->GetPosition().Z;
-					childPkt.Position.Yaw = info->GetPosition().Yaw;
-					pkt.moveList.push_back(childPkt);
-				}
-				else
-				{
-					info->SetMoving(true);
-				}
+				info->SetMoving(true);
 			}
+
+			BS_Protocol::BS_C_MOVE childPkt;
+			childPkt.Code = info->GetCode();
+			childPkt.Position.X = info->GetPosition().X;
+			childPkt.Position.Y = info->GetPosition().Y;
+			childPkt.Position.Z = info->GetPosition().Z;
+			childPkt.Position.Yaw = info->GetPosition().Yaw;
+			pkt.moveList.push_back(childPkt);
 		}
 	}
 
