@@ -143,17 +143,21 @@ void BS_GameRoom::MoveMoster()
 				cout << "playerInfo : " << playerInfo->GetPosition().X << ", " << playerInfo->GetPosition().Y << ", " << playerInfo->GetPosition().Yaw << endl;
 				cout << "몬스터 : " << info->GetPosition().X << ", " << info->GetPosition().Y << ", " << info->GetPosition().Yaw << endl;
 			}
-			if (info->IsMoving())
-			{
-				int32 Yaw = disRotate(gen);
-				int32 X = info->GetPosition().X + (250 * (cosf(Yaw)));
-				int32 Y = info->GetPosition().Y + (250 * (sinf(Yaw)));
-				_mapInfo->InMonsterRect(X, Y);
-				info->SetPosition(X, Y, info->GetPosition().Z, Yaw);
-			}
 			else
 			{
-				info->SetMoving(true);
+				if (info->IsMoving())
+				{
+					int32 Yaw = info->GetPosition().Yaw + disRotate(gen);
+					Yaw = Yaw % 360;
+					int32 X = info->GetPosition().X + (250 * (cosf(Yaw)));
+					int32 Y = info->GetPosition().Y + (250 * (sinf(Yaw)));
+					_mapInfo->InMonsterRect(X, Y);
+					info->SetPosition(X, Y, info->GetPosition().Z, Yaw);
+				}
+				else
+				{
+					info->SetMoving(true);
+				}
 			}
 
 			BS_Protocol::BS_C_MOVE childPkt;

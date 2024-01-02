@@ -27,6 +27,11 @@ namespace FunctionUtils
     {
       return x1 * x2 + y1 * y2;
     }
+    // 벡터 외적 공식 사용
+    static double crossProduct(double x1, double y1, double x2, double y2)
+    {
+      return x1 * y2 - x2 * y1;
+    }
     // 벡터 크기
     static double magnitude(float x, float y)
     {
@@ -58,7 +63,7 @@ namespace FunctionUtils
       float x_forward = 1;
       float y_forward = 0;
       normalizeVector(x, y);
-      double dot = dotProduct(x, y, x_forward, y_forward);
+      double dot = dotProduct(x_forward, y_forward, x, y);
       // float mag1 = magnitude(x1, y1);
       // float mag2 = magnitude(x2, y2);
 
@@ -69,7 +74,14 @@ namespace FunctionUtils
       double radian = acos(dot);
       float angleRad = radianToDegree(radian);
 
-      return angleRad;
+      if (crossProduct(x_forward, y_forward, x, y) > 0)
+      {
+        return angleRad;
+      }
+      else
+      {
+        return angleRad * (-1);
+      }
     }
   };
 }

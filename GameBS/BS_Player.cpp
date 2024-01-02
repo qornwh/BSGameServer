@@ -94,8 +94,6 @@ void BS_Monster_Info::SetAttackPlayerUUid(int32 uuid)
 
 bool BS_Monster_Info::MoveTarget(FVector &targetPosition)
 {
-	float theta = FunctionUtils::Utils::calculateAngle(_position.X, _position.Y, targetPosition.X, targetPosition.Y);
-
 	if (CheckAttackTarget(targetPosition))
 	{
 		// 먼저 공격 범위 내에 있으면 공격
@@ -123,10 +121,34 @@ bool BS_Monster_Info::MoveTarget(FVector &targetPosition)
 		int TopY = Y + 200;
 		int BottomY = Y - 200;
 		*/
+		float vectovecTheta = FunctionUtils::Utils::calculateAngle(_position.X, _position.Y, targetPosition.X, targetPosition.Y);
 
-		_position.X = targetPosition.X;
-		_position.Y = targetPosition.Y;
-		_position.Yaw = targetPosition.Yaw;
+		float delX = abs(_position.X - targetPosition.X);
+		float delY = abs(_position.Y - targetPosition.Y);
+		// float delH = sqrt(pow(delX, 2) + pow(delY, 2));
+
+		float degree = atan2(delX, delY);
+		float theta = FunctionUtils::Utils::radianToDegree(degree);
+
+		int distence = 200;
+
+		_position.Yaw = vectovecTheta;
+		if (_position.Yaw > 360)
+			_position.Yaw = (int32)_position.Yaw % 360;
+		else if (_position.Yaw < 0)
+			_position.Yaw = 360 - _position.Yaw;
+
+		if (_position.X > targetPosition.X)
+			_position.X = targetPosition.X + (distence * cos(theta));
+		else
+			_position.X = targetPosition.X - (distence * cos(theta));
+
+		if (_position.Y > targetPosition.Y)
+			_position.Y = targetPosition.Y + (distence * sin(theta));
+		else
+			_position.Y = targetPosition.Y - (distence * sin(theta));
+
+		// cout << "theta : " << theta << " yaw : " << _position.Yaw << endl;
 		return false;
 	}
 }
