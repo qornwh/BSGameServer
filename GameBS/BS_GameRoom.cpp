@@ -147,10 +147,12 @@ void BS_GameRoom::MoveMoster()
 			{
 				if (info->IsMoving())
 				{
-					int32 Yaw = info->GetPosition().Yaw + disRotate(gen);
-					Yaw = Yaw % 360;
-					int32 X = info->GetPosition().X + (250 * (cosf(Yaw)));
-					int32 Y = info->GetPosition().Y + (250 * (sinf(Yaw)));
+					// int32 Yaw = info->GetPosition().Yaw + disRotate(gen);
+					// Yaw = Yaw % 360;
+					//  회전 처리는 클라에게 맏긴다.방법을 모르겟다.
+					int32 Yaw = disRotate360(gen);
+					int32 X = info->GetPosition().X + (250 * (cos(Yaw)));
+					int32 Y = info->GetPosition().Y + (250 * (sin(Yaw)));
 					_mapInfo->InMonsterRect(X, Y);
 					info->SetPosition(X, Y, info->GetPosition().Z, Yaw);
 				}

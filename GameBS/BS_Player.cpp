@@ -127,8 +127,8 @@ bool BS_Monster_Info::MoveTarget(FVector &targetPosition)
 		// float delH = sqrt(pow(delX, 2) + pow(delY, 2));
 
 		float degree = atan2(delY, delX);
+		// float theta = FunctionUtils::Utils::calculateAngle(_position.X, _position.Y, targetPosition.X, targetPosition.Y);
 		float theta = FunctionUtils::Utils::radianToDegree(degree);
-
 		int distence = 200;
 
 		if (_position.X > targetPosition.X)
@@ -140,6 +140,8 @@ bool BS_Monster_Info::MoveTarget(FVector &targetPosition)
 			_position.Y = targetPosition.Y + (distence * sin(theta));
 		else
 			_position.Y = targetPosition.Y - (distence * sin(theta));
+
+		//_position.Yaw += theta;
 
 		// cout << "theta : " << theta << " yaw : " << _position.Yaw << endl;
 		return false;
@@ -185,7 +187,11 @@ bool BS_Monster_Info::CheckAttackTarget(FVector &targetPosition)
 
 	cout << "dist : " << dist << " radius : " << radius << endl;
 	if (radius >= dist)
+	{
+		float theta = FunctionUtils::Utils::calculateAngle(_position.X, _position.Y, targetPosition.X, targetPosition.Y);
+		_position.Yaw = theta;
 		return true;
+	}
 
 	return false;
 }
