@@ -205,6 +205,6 @@ void BS_GameRoom::MonsterHit(SendBufferRef sendBuffer, int32 MonsterCode, int32 
 		// 일단 몬스터 히트될때 경직시간은 나중 이동될 거리를 줄이는것으로 간다.
 		_monsterMap[MonsterCode]->SetMoving(false);
 		_monsterMap[MonsterCode]->SetAttackPlayerUUid(socketFd);
-		BroadcastAnother(sendBuffer, socketFd);
+		Broadcast(sendBuffer);
 	}
 }
