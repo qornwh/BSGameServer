@@ -113,6 +113,7 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 					monster.Type = info->GetType();
 					monster.Hp = info->GetHp();
 					monster.Code = info->GetCode();
+					monster.Target = info->GetAttackPlayerUUid();
 					monster.Position.X = info->GetPosition().X;
 					monster.Position.Y = info->GetPosition().Y;
 					monster.Position.Z = info->GetPosition().Z;
@@ -229,7 +230,7 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 	break;
 	case 8:
 	{
-		// 플레이어 공격 -> 몬스터 히트
+		// 플레이어 공격 -> 몬스터 히트 : 추가로 데미지 전달까지 완성되어야 된다!!
 		int offset = sizeof(PacketHeader);
 		int32 *Code = PacketUtils::ReadBufferPtr<int32>(buffer, offset);
 
@@ -245,6 +246,16 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 			JobRef job = make_shared<Job>(&BS_GameRoom::MonsterHit, room, sendBuffer, *Code, getSocketFd());
 			room->PushJobQueue(job);
 		}
+	}
+	break;
+	case 9:
+	{
+		// 몬스터 공격
+	}
+	break;
+	case 10:
+	{
+		// 몬스터 kill, respone 메시지
 	}
 	break;
 	default:

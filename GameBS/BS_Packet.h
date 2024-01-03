@@ -85,28 +85,29 @@ namespace BS_Protocol
 
 	struct Monster
 	{
-		Monster(uint16 Type, uint8 Hp, uint32 Code) : Type(Type), Hp(Hp), Code(Code) {}
+		Monster(uint16 Type, uint8 Hp, int32 Code) : Type(Type), Hp(Hp), Code(Code) {}
 		uint16 Type;
 		uint8 Hp;
-		uint32 Code;
+		int32 Code;
 		FVector Position;
 
 		// 이름
 		uint16 NameLen;
 		BYTE *Name;
+		int32 Target;
 
 		int32 size()
 		{
-			return sizeof(uint8) + sizeof(uint32) + sizeof(FVector) + sizeof(uint16) * 2 + sizeof(Name);
+			return sizeof(uint8) + sizeof(int32) + sizeof(FVector) + sizeof(uint16) * 2 + sizeof(Name) + sizeof(int32);
 		}
 	};
 
 	struct Player
 	{
-		Player(uint16 Type, uint8 Hp, uint32 Code) : Type(Type), Hp(Hp), Code(Code) {}
+		Player(uint16 Type, uint8 Hp, int32 Code) : Type(Type), Hp(Hp), Code(Code) {}
 		uint16 Type;
 		uint8 Hp;
-		uint32 Code;
+		int32 Code;
 		FVector Position;
 
 		// 이름
@@ -115,7 +116,7 @@ namespace BS_Protocol
 
 		int32 size()
 		{
-			return sizeof(uint8) + sizeof(uint32) + sizeof(FVector) + sizeof(uint16) * 2 + sizeof(Name);
+			return sizeof(uint8) + sizeof(int32) + sizeof(FVector) + sizeof(uint16) * 2 + sizeof(Name);
 		}
 	};
 

@@ -104,6 +104,7 @@ public:
 			bw.Write(&monster.Type);
 			bw.Write(&monster.Hp);
 			bw.Write(&monster.Code);
+			bw.Write(&monster.Target);
 			bw.Write(&monster.Position.X);
 			bw.Write(&monster.Position.Y);
 			bw.Write(&monster.Position.Z);
