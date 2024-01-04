@@ -73,10 +73,6 @@ void BS_Unit_Info::SetSpawn(bool spawnd)
 	_isSpawned = spawnd;
 }
 
-BS_Player_Info::BS_Player_Info(int32 socketFd) : _socketFd(socketFd), BS_Unit_Info(socketFd)
-{
-}
-
 BS_Monster_Info::BS_Monster_Info(int32 uuid) : BS_Unit_Info(uuid)
 {
 }
