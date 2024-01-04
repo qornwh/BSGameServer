@@ -12,7 +12,7 @@ class Session : public enable_shared_from_this<Session>
 {
 	enum
 	{
-		BUFFER_SIZE = 0x10000, //64KB
+		BUFFER_SIZE = 0x10000, // 64KB
 	};
 
 public:
@@ -27,9 +27,10 @@ public:
 
 public:
 	bool Send(SendBufferRef buffer);
+	void PushBuffer(SendBufferRef buffer);
 	void Connect();
 	bool ReciveMessage();
-	virtual int32 OnRecv(BYTE* buffer, int32 len) { return len; }
+	virtual int32 OnRecv(BYTE *buffer, int32 len) { return len; }
 	void Disconnect();
 
 private:
@@ -42,7 +43,7 @@ private:
 private:
 	int _socketFd;
 	weak_ptr<Service> _service;
-	Atomic<bool> _connected{ false };
+	Atomic<bool> _connected{false};
 	// USE_LOCK;
 	Lock lock;
 };
@@ -56,6 +57,6 @@ public:
 	PacketSessionRef GetPacketSessionRef() { return static_pointer_cast<PacketSession>(shared_from_this()); }
 
 public:
-	virtual int32 OnRecv(BYTE* buffer, int32 len);
-	virtual void OnRecvPacket(BYTE* buffer, int32 len) = 0;
+	virtual int32 OnRecv(BYTE *buffer, int32 len);
+	virtual void OnRecvPacket(BYTE *buffer, int32 len) = 0;
 };

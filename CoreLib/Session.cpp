@@ -52,6 +52,12 @@ bool Session::Send(SendBufferRef buffer)
 	return true;
 }
 
+void Session::PushBuffer(SendBufferRef buffer)
+{
+	WriteLockGuard wLock(lock, "writeLock");
+	_sendBuffers.push_back(buffer);
+}
+
 void Session::Connect()
 {
 	_connected.store(true);
@@ -76,11 +82,11 @@ bool Session::ReciveMessage()
 
 		int dataSize = _recvBuffer.DataSize();
 
-		BYTE* buffer = _recvBuffer.ReadPos();
+		BYTE *buffer = _recvBuffer.ReadPos();
 
-		//cout << strLen << endl;
+		// cout << strLen << endl;
 		int32 processLen = OnRecv(buffer, dataSize);
-		//cout << "session OnRecv" << endl;
+		// cout << "session OnRecv" << endl;
 		if (!_recvBuffer.OnRead(processLen) || processLen <= 0 || dataSize < processLen)
 		{
 			Disconnect();
@@ -107,7 +113,7 @@ PacketSession::~PacketSession()
 {
 }
 
-int32 PacketSession::OnRecv(BYTE* buffer, int32 len)
+int32 PacketSession::OnRecv(BYTE *buffer, int32 len)
 {
 	return len;
 }
