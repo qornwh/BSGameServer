@@ -191,8 +191,8 @@ public:
 		return sendBuffer;
 	}
 
-	// 유저 스킬 메시지
-	static SendBufferRef MakePacket(BS_Protocol::BS_ATTACK_PLAYER &pkt)
+	// 유저, 몬스터 스킬 메시지
+	static SendBufferRef MakePacket(BS_Protocol::BS_ATTACK_UNIT &pkt)
 	{
 		const uint16 dataSize = pkt.size();
 		SendBufferRef sendBuffer = MakeSendBuffer(dataSize, 7);
@@ -203,15 +203,34 @@ public:
 		return sendBuffer;
 	}
 
-	// 몬스터 히트 메시지
-	static SendBufferRef MakePacket(BS_Protocol::BS_HIT_MONSTER &pkt)
+	// 히트 메시지
+	static SendBufferRef MakePacket(BS_Protocol::BS_HIT_UNIT &pkt)
 	{
 		const uint16 dataSize = pkt.size();
 		SendBufferRef sendBuffer = MakeSendBuffer(dataSize, 8);
 
 		BufferWrite bw(sendBuffer->Buffer() + sizeof(PacketHeader), dataSize);
-		bw.Write(&pkt.Code);
-		bw.Write(&pkt.MonsterCode);
+		bw.Write(&pkt.AttackCode);
+		bw.Write(&pkt.TargetCode);
+		return sendBuffer;
+	}
+
+	// 공격 스킬 메시지 다중
+	static SendBufferRef MakePacket(BS_Protocol::BS_ATTACK_UNIT_LIST &pkt)
+	{
+		const uint16 dataSize = pkt.size();
+		uint16 attackListSize = pkt.attackList.size();
+		SendBufferRef sendBuffer = MakeSendBuffer(dataSize, 9);
+
+		BufferWrite bw(sendBuffer->Buffer() + sizeof(PacketHeader), dataSize);
+
+		bw.Write(&attackListSize);
+		for (auto attack : pkt.attackList)
+		{
+			bw.Write(&attack.Code);
+			bw.Write(&attack.SkillCode);
+		}
+
 		return sendBuffer;
 	}
 

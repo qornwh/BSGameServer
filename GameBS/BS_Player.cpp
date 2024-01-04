@@ -94,10 +94,12 @@ void BS_Monster_Info::SetAttackPlayerUUid(int32 uuid)
 
 bool BS_Monster_Info::MoveTarget(FVector &targetPosition)
 {
+	if (_attaking)
+		return false; // 공격중이면 통과
 	if (CheckAttackTarget(targetPosition))
 	{
 		// 먼저 공격 범위 내에 있으면 공격
-		AttackTarget();
+		_attaking = true;
 		return true;
 	}
 	else
@@ -122,28 +124,14 @@ bool BS_Monster_Info::MoveTarget(FVector &targetPosition)
 		int BottomY = Y - 200;
 		*/
 
-		float delX = _position.X - targetPosition.X;
-		float delY = _position.Y - targetPosition.Y;
-		// float delH = sqrt(pow(delX, 2) + pow(delY, 2));
+		float delX = targetPosition.X - _position.X;
+		float delY = targetPosition.Y - _position.Y;
 
-		float degree = atan2(delY, delX);
-		// float theta = FunctionUtils::Utils::calculateAngle(_position.X, _position.Y, targetPosition.X, targetPosition.Y);
-		float theta = FunctionUtils::Utils::radianToDegree(degree);
-		int distence = 200;
+		float radian = atan2(delY, delX);
+		float theta = FunctionUtils::Utils::radianToDegree(radian);
 
-		if (_position.X > targetPosition.X)
-			_position.X = targetPosition.X + (distence * cos(theta));
-		else
-			_position.X = targetPosition.X - (distence * cos(theta));
-
-		if (_position.Y > targetPosition.Y)
-			_position.Y = targetPosition.Y + (distence * sin(theta));
-		else
-			_position.Y = targetPosition.Y - (distence * sin(theta));
-
-		//_position.Yaw += theta;
-
-		// cout << "theta : " << theta << " yaw : " << _position.Yaw << endl;
+		_position.X += (_distence * cos(radian));
+		_position.Y += (_distence * sin(radian));
 		return false;
 	}
 }
@@ -185,7 +173,8 @@ bool BS_Monster_Info::CheckAttackTarget(FVector &targetPosition)
 
 	int32 dist = sqrt(pow(_position.X - targetPosition.X, 2) + pow(_position.Y - targetPosition.Y, 2));
 
-	cout << "dist : " << dist << " radius : " << radius << endl;
+	cout << "dist : " << dist << " radius : " << radius << " target x :" << targetPosition.X << " target y : " << targetPosition.Y << endl;
+	cout << "monster x : " << _position.X << " monster y : " << _position.Y << endl;
 	if (radius >= dist)
 	{
 		float theta = FunctionUtils::Utils::calculateAngle(_position.X, _position.Y, targetPosition.X, targetPosition.Y);
@@ -207,7 +196,22 @@ void BS_Monster_Info::SetMoving(bool isMoving)
 
 bool BS_Monster_Info::IsMoving()
 {
-	return _moving;
+	return _moving && !_attaking;
+}
+
+bool BS_Monster_Info::IsAttacking()
+{
+	return _attaking;
+}
+
+void BS_Monster_Info::SetTick()
+{
+	if (_attaking)
+	{
+		_tick = (_tick + 1) % 4;
+		if (_tick == 0)
+			_attaking = false;
+	}
 }
 
 int32 BS_Monster_Info::GetAttackPlayerUUid()

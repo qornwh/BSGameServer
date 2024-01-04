@@ -22,21 +22,21 @@ int main()
 	BS_GameServerServiceRef serverRef = make_shared<BS_GameServerService>();
 
 	ASSERT_CRASH(serverRef->Start());
-	{
-		ThreadManager::GetInstance().CreateThread([&serverRef]()
-																							{
-			while (1)
-			{
-				serverRef->Dispatch();
+	//{
+	//	ThreadManager::GetInstance().CreateThread([&serverRef]()
+	//																						{
+	//		while (1)
+	//		{
+	//			serverRef->Dispatch();
 
-				// 일단 임시로 여기서 처리 한다.
-				shared_ptr<BS_GameRoom> room = GBSRoomManger->getRoom(0);
-				if (room != nullptr)
-				{
-					room->RoomTask();
-				}
-			} });
-	}
+	//			// 일단 임시로 여기서 처리 한다.
+	//			shared_ptr<BS_GameRoom> room = GBSRoomManger->getRoom(0);
+	//			if (room != nullptr)
+	//			{
+	//				room->RoomTask();
+	//			}
+	//		} });
+	//}
 	while (1)
 	{
 		serverRef->Dispatch();

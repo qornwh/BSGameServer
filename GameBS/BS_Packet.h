@@ -160,7 +160,7 @@ namespace BS_Protocol
 		}
 	};
 
-	struct BS_ATTACK_PLAYER
+	struct BS_ATTACK_UNIT
 	{
 		int32 Code;
 
@@ -168,19 +168,34 @@ namespace BS_Protocol
 
 		int32 size()
 		{
-			return sizeof(BS_ATTACK_PLAYER);
+			return sizeof(BS_ATTACK_UNIT);
 		}
 	};
 
-	struct BS_HIT_MONSTER
+	struct BS_ATTACK_UNIT_LIST
 	{
-		int32 Code;
-
-		int32 MonsterCode;
+		vector<BS_ATTACK_UNIT> attackList;
 
 		int32 size()
 		{
-			return sizeof(BS_HIT_MONSTER);
+			int32 _size = 0;
+			for (auto attack : attackList)
+			{
+				_size += sizeof(attack);
+			}
+			return _size + sizeof(uint16);
+		}
+	};
+
+	struct BS_HIT_UNIT
+	{
+		int32 TargetCode;
+
+		int32 AttackCode;
+
+		int32 size()
+		{
+			return sizeof(BS_HIT_UNIT);
 		}
 	};
 }

@@ -83,6 +83,15 @@ void BS_GameRoom::BroadcastAnother(SendBufferRef sendBuffer, int32 socketFd)
 	}
 }
 
+void BS_GameRoom::BroadcastPushMessage(SendBufferRef SendBuffer)
+{
+	// 일단 세션에 메시지만 push하는 용도
+	for (auto pair : _sessionMap)
+	{
+		pair.second->PushBuffer(SendBuffer);
+	}
+}
+
 void BS_GameRoom::PushJobQueue(JobRef job)
 {
 	Push(job);
@@ -120,28 +129,32 @@ void BS_GameRoom::SpanMoster()
 void BS_GameRoom::MoveMoster()
 {
 	BS_Protocol::BS_C_MOVE_LIST pkt;
+	BS_Protocol::BS_ATTACK_UNIT_LIST attackPkt;
 	for (auto &iter : _monsterMap)
 	{
 		auto info = iter.second;
+		int32 playerUUid = info->GetAttackPlayerUUid();
+		info->SetTick();
 		if (info->IsSpawned())
 		{
-			if (info->GetAttackPlayerUUid() > 0 && _sessionMap.find(info->GetAttackPlayerUUid()) != _sessionMap.end() && info->OnTarget(_sessionMap[info->GetAttackPlayerUUid()]->getPlayer(), _mapInfo))
+			if (playerUUid > 0 && _sessionMap.find(playerUUid) != _sessionMap.end() && info->OnTarget(_sessionMap[playerUUid]->getPlayer(), _mapInfo))
 			{
 				// 타깃 추적
-				shared_ptr<BS_Player_Info> playerInfo = _sessionMap[info->GetAttackPlayerUUid()]->getPlayer();
+				shared_ptr<BS_Player_Info> playerInfo = _sessionMap[playerUUid]->getPlayer();
 
-				bool IsAttacking = info->MoveTarget(playerInfo->GetPosition());
-				if (IsAttacking)
+				bool IsAttack = info->MoveTarget(playerInfo->GetPosition());
+				if (IsAttack)
 				{
-					// 공격 성공시 타겟 초기화s
-					// info->SetAttackPlayerUUid(-1);
-
-					cout << "공격 성공 : " << info->GetAttackPlayerUUid() << endl;
+					cout << "공격 성공 : " << playerUUid << endl;
+					BS_Protocol::BS_ATTACK_UNIT attackChildPkt;
+					attackChildPkt.Code = info->GetCode();
+					attackChildPkt.SkillCode = info->GetSkillCode();
+					attackPkt.attackList.push_back(attackChildPkt);
 					continue;
 				}
 
-				cout << "playerInfo : " << playerInfo->GetPosition().X << ", " << playerInfo->GetPosition().Y << ", " << playerInfo->GetPosition().Yaw << endl;
-				cout << "몬스터 : " << info->GetPosition().X << ", " << info->GetPosition().Y << ", " << info->GetPosition().Yaw << endl;
+				// cout << "playerInfo : " << playerInfo->GetPosition().X << ", " << playerInfo->GetPosition().Y << ", " << playerInfo->GetPosition().Yaw << endl;
+				// cout << "몬스터 : " << info->GetPosition().X << ", " << info->GetPosition().Y << ", " << info->GetPosition().Yaw << endl;
 			}
 			else
 			{
@@ -150,9 +163,11 @@ void BS_GameRoom::MoveMoster()
 					// int32 Yaw = info->GetPosition().Yaw + disRotate(gen);
 					// Yaw = Yaw % 360;
 					//  회전 처리는 클라에게 맏긴다.방법을 모르겟다.
-					int32 Yaw = disRotate360(gen);
-					int32 X = info->GetPosition().X + (250 * (cos(Yaw)));
-					int32 Y = info->GetPosition().Y + (250 * (sin(Yaw)));
+					int32 Yaw = info->GetPosition().Yaw;
+					if (_tick == 1)
+						Yaw = disRotate360(gen);
+					int32 X = info->GetPosition().X + (info->GetDistence() * (cos(Yaw / 3.14)));
+					int32 Y = info->GetPosition().Y + (info->GetDistence() * (sin(Yaw / 3.14)));
 					_mapInfo->InMonsterRect(X, Y);
 					info->SetPosition(X, Y, info->GetPosition().Z, Yaw);
 				}
@@ -171,9 +186,14 @@ void BS_GameRoom::MoveMoster()
 			pkt.moveList.push_back(childPkt);
 		}
 	}
-
+	if (attackPkt.attackList.size() > 0)
+	{
+		SendBufferRef attackSendBuffer = BS_PacketHandler::MakePacket(attackPkt);
+		BroadcastPushMessage(attackSendBuffer);
+	}
 	SendBufferRef sendBuffer = BS_PacketHandler::MakePacket(pkt);
 	Broadcast(sendBuffer);
+	_tick = (_tick + 1) % 2;
 }
 
 void BS_GameRoom::RoomTask()

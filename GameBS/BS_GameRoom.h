@@ -15,6 +15,7 @@ public:
 	void DelSession(shared_ptr<class BS_GameSession> gameSession);
 	void Broadcast(SendBufferRef sendBuffer);
 	void BroadcastAnother(SendBufferRef sendBuffer, int32 socketFd);
+	void BroadcastPushMessage(SendBufferRef SendBuffer);
 	void PushJobQueue(JobRef job);
 
 	void SetTickCountRoom();
@@ -40,7 +41,7 @@ private:
 	shared_ptr<class BS_MapInfo> _mapInfo;
 
 	// 몬스터 개수 고정 10마리
-	int32 _monsterSize = 10;
+	int32 _monsterSize = 1;
 
 	unordered_map<int32, shared_ptr<class BS_Monster_Info>> _monsterMap;
 
@@ -52,4 +53,6 @@ private:
 	uniform_int_distribution<int32> disRotate360{0, 360};
 
 	Atomic<bool> isLoopTask{false};
+
+	int32 _tick = 0;
 };

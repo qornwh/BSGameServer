@@ -214,7 +214,7 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 		int offset = sizeof(PacketHeader);
 		int32 *SkillCode = PacketUtils::ReadBufferPtr<int32>(buffer, offset);
 
-		BS_Protocol::BS_ATTACK_PLAYER pkt;
+		BS_Protocol::BS_ATTACK_UNIT pkt;
 
 		pkt.Code = getSocketFd();
 		pkt.SkillCode = *SkillCode;
@@ -230,32 +230,42 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 	break;
 	case 8:
 	{
-		// 플레이어 공격 -> 몬스터 히트 : 추가로 데미지 전달까지 완성되어야 된다!!
+		// 공격 -> 히트 : 추가로 데미지 전달까지 완성되어야 된다!!
 		int offset = sizeof(PacketHeader);
-		int32 *Code = PacketUtils::ReadBufferPtr<int32>(buffer, offset);
+		int32 *TargetCode = PacketUtils::ReadBufferPtr<int32>(buffer, offset);
+		int32 *AttackCode = PacketUtils::ReadBufferPtr<int32>(buffer, offset);
 
-		BS_Protocol::BS_HIT_MONSTER pkt;
+		BS_Protocol::BS_HIT_UNIT pkt;
 
-		pkt.Code = getSocketFd();
-		pkt.MonsterCode = *Code;
+		pkt.TargetCode = *TargetCode;
+		if (TargetCode < 0)
+		{
+			// 플레이어 -> 몬스터 공격
+			pkt.AttackCode = getSocketFd();
+		}
+		else
+		{
+			// 몬스터 -> 플레이어 공격
+			pkt.AttackCode = *AttackCode;
+		}
 
 		shared_ptr<BS_GameRoom> room = GBSRoomManger->getRoom(0);
 		if (room != nullptr)
 		{
 			SendBufferRef sendBuffer = BS_PacketHandler::MakePacket(pkt);
-			JobRef job = make_shared<Job>(&BS_GameRoom::MonsterHit, room, sendBuffer, *Code, getSocketFd());
+			JobRef job = make_shared<Job>(&BS_GameRoom::MonsterHit, room, sendBuffer, *TargetCode, getSocketFd());
 			room->PushJobQueue(job);
 		}
 	}
 	break;
 	case 9:
 	{
-		// 몬스터 공격
+		// 몬스터 kill, respone 메시지
 	}
 	break;
 	case 10:
 	{
-		// 몬스터 kill, respone 메시지
+		//
 	}
 	break;
 	default:

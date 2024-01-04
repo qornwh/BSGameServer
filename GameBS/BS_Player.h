@@ -74,9 +74,7 @@ public:
 	//~BS_Monster_Info();
 
 	void SetSpawnPosition(int32 startX, int32 startY);
-
 	void SetInfo(uint16 type, int32 hp);
-
 	void SetAttackPlayerUUid(int32 uuid);
 	int32 GetAttackPlayerUUid();
 	bool OnTarget(shared_ptr<BS_Player_Info> playerInfo, shared_ptr<class BS_MapInfo> mapInfo);
@@ -91,11 +89,21 @@ public:
 	void SetMoving(bool isMoving);
 	bool IsMoving();
 
+	bool IsAttacking();
+	void SetTick();
+
+	int32 GetSkillCode() { return _skillCode; }
+	int32 GetDistence() { return _distence; }
+
 private:
 	int32 _startX = 0;
 	int32 _startY = 0;
 	bool _moving = true;
+	bool _attaking = false;
+	int32 _skillCode = 1;
 
 private:
 	int32 _targetPlayerUUid = -1; // 공격할 대상
+	int32 _distence = 150;				// 한번에 이동할 거리
+	int32 _tick = -1;
 };
