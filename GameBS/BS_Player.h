@@ -59,11 +59,8 @@ protected:
 class BS_Player_Info : public BS_Unit_Info
 {
 public:
-	BS_Player_Info(int32 socketFd);
+	BS_Player_Info(int32 uuid);
 	//~BS_Player_Info();
-
-private:
-	int32 _socketFd;
 };
 
 // 일단 uuid 는 음의 정수로 간다.

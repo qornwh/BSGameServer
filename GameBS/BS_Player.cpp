@@ -217,7 +217,6 @@ int32 BS_Monster_Info::GetAttackPlayerUUid()
 
 bool BS_Monster_Info::OnTarget(shared_ptr<BS_Player_Info> playerInfo, shared_ptr<BS_MapInfo> mapInfo)
 {
-	// 일단 여기에 타겟 체크도 둔다.
 	if (_targetPlayerUUid > -1)
 	{
 		return mapInfo->InRect(playerInfo->GetPosition().X, playerInfo->GetPosition().Y, mapInfo->GetMosterMap());
@@ -229,4 +228,8 @@ void BS_Monster_Info::SetSpawnPosition(int32 startX, int32 startY)
 {
 	_startX = startX;
 	_startY = startY;
+}
+
+BS_Player_Info::BS_Player_Info(int32 uuid) : BS_Unit_Info(uuid)
+{
 }
