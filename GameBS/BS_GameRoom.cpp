@@ -120,6 +120,7 @@ void BS_GameRoom::SpanMoster()
 		int32 uuid = i * (-1);
 		if (!_monsterMap[uuid]->IsSpawned())
 		{
+			_monsterMap[uuid]->ResetSpawn();
 			_monsterMap[uuid]->SetSpawn(true);
 			// 포지션 리셋은 버리고 사망한 위치에서 스폰된다.
 		}
@@ -152,9 +153,6 @@ void BS_GameRoom::MoveMoster()
 					attackPkt.attackList.push_back(attackChildPkt);
 					continue;
 				}
-
-				// cout << "playerInfo : " << playerInfo->GetPosition().X << ", " << playerInfo->GetPosition().Y << ", " << playerInfo->GetPosition().Yaw << endl;
-				// cout << "몬스터 : " << info->GetPosition().X << ", " << info->GetPosition().Y << ", " << info->GetPosition().Yaw << endl;
 			}
 			else
 			{
@@ -176,21 +174,6 @@ void BS_GameRoom::MoveMoster()
 					info->SetMoving(true);
 				}
 			}
-
-			BS_Protocol::BS_C_MOVE childPkt;
-			childPkt.Code = info->GetCode();
-			childPkt.Position.X = info->GetPosition().X;
-			childPkt.Position.Y = info->GetPosition().Y;
-			childPkt.Position.Z = info->GetPosition().Z;
-			childPkt.Position.Yaw = info->GetPosition().Yaw;
-			pkt.moveList.push_back(childPkt);
-		}
-		else
-		{
-			// 몬스터 스폰 시작
-			info->SetSpawn(true);
-			info->ResetSpawn();
-			cout << "몬스터 리스폰 : " << playerUUid << endl;
 
 			BS_Protocol::BS_C_MOVE childPkt;
 			childPkt.Code = info->GetCode();
@@ -240,16 +223,11 @@ void BS_GameRoom::MonsterHit(SendBufferRef sendBuffer, int32 MonsterCode, int32 
 	if (_monsterMap.find(MonsterCode) != _monsterMap.end())
 	{
 		// 일단 몬스터 히트될때 경직시간은 나중 이동될 거리를 줄이는것으로 간다.
+		_monsterMap[MonsterCode]->SetMoving(false);
 		_monsterMap[MonsterCode]->TakeDemage(Demage);
 		if (!_monsterMap[MonsterCode]->DieUnit())
 		{
-			_monsterMap[MonsterCode]->SetMoving(false);
 			_monsterMap[MonsterCode]->SetAttackPlayerUUid(socketFd);
-		}
-		else
-		{
-			_monsterMap[MonsterCode]->SetMoving(true);
-			_monsterMap[MonsterCode]->SetAttackPlayerUUid(-1);
 		}
 		Broadcast(sendBuffer);
 	}

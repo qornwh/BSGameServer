@@ -61,6 +61,8 @@ void BS_Unit_Info::SetHp(int32 hp)
 void BS_Unit_Info::TakeDemage(int32 demage)
 {
 	_hp -= demage;
+	if (_hp <= 0)
+		SetSpawn(false);
 }
 
 void BS_Unit_Info::HitUnit(int32 Damage)
@@ -174,8 +176,8 @@ bool BS_Monster_Info::CheckAttackTarget(FVector &targetPosition)
 
 	int32 dist = sqrt(pow(_position.X - targetPosition.X, 2) + pow(_position.Y - targetPosition.Y, 2));
 
-	cout << "dist : " << dist << " radius : " << radius << " target x :" << targetPosition.X << " target y : " << targetPosition.Y << endl;
-	cout << "monster x : " << _position.X << " monster y : " << _position.Y << endl;
+	// cout << "dist : " << dist << " radius : " << radius << " target x :" << targetPosition.X << " target y : " << targetPosition.Y << endl;
+	// cout << "monster x : " << _position.X << " monster y : " << _position.Y << endl;
 	if (radius >= dist)
 	{
 		float theta = FunctionUtils::Utils::calculateAngle(_position.X, _position.Y, targetPosition.X, targetPosition.Y);
@@ -207,6 +209,7 @@ void BS_Monster_Info::ResetSpawn()
 	_position.Z = 100;
 	_position.Yaw = 0;
 	_hp = 100;
+	_targetPlayerUUid = -1;
 }
 
 bool BS_Monster_Info::IsAttacking()
