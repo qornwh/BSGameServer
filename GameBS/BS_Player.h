@@ -27,6 +27,7 @@ public:
 	void SetPosition(int32 X, int32 Y, int32 Z, float Yaw);
 	void SetType(uint16 type);
 	void SetHp(int32 hp);
+	void TakeDemage(int32 demage);
 
 	BYTE *GetName() { return _name; }
 	int32 GetCode() { return _uuid; }
@@ -91,6 +92,8 @@ public:
 
 	int32 GetSkillCode() { return _skillCode; }
 	int32 GetDistence() { return _distence; }
+
+	void ResetSpawn();
 
 private:
 	int32 _startX = 0;

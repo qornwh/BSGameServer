@@ -212,6 +212,7 @@ public:
 		BufferWrite bw(sendBuffer->Buffer() + sizeof(PacketHeader), dataSize);
 		bw.Write(&pkt.AttackCode);
 		bw.Write(&pkt.TargetCode);
+		bw.Write(&pkt.Damage);
 		return sendBuffer;
 	}
 

@@ -193,6 +193,8 @@ namespace BS_Protocol
 
 		int32 AttackCode;
 
+		int32 Damage;
+
 		int32 size()
 		{
 			return sizeof(BS_HIT_UNIT);

@@ -58,6 +58,11 @@ void BS_Unit_Info::SetHp(int32 hp)
 	_hp = hp;
 }
 
+void BS_Unit_Info::TakeDemage(int32 demage)
+{
+	_hp -= demage;
+}
+
 void BS_Unit_Info::HitUnit(int32 Damage)
 {
 	_hp -= Damage;
@@ -193,6 +198,15 @@ void BS_Monster_Info::SetMoving(bool isMoving)
 bool BS_Monster_Info::IsMoving()
 {
 	return _moving && !_attaking;
+}
+
+void BS_Monster_Info::ResetSpawn()
+{
+	_position.X = _startX;
+	_position.Y = _startY;
+	_position.Z = 100;
+	_position.Yaw = 0;
+	_hp = 100;
 }
 
 bool BS_Monster_Info::IsAttacking()

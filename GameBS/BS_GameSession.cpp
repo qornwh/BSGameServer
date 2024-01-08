@@ -237,11 +237,12 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 
 		BS_Protocol::BS_HIT_UNIT pkt;
 
+		pkt.Damage = 10;
 		pkt.TargetCode = *TargetCode;
-		if (TargetCode < 0)
+		if (pkt.TargetCode < 0)
 		{
 			// 플레이어 -> 몬스터 공격
-			pkt.AttackCode = getSocketFd();
+			pkt.AttackCode = _player->GetCode();
 		}
 		else
 		{
@@ -253,7 +254,7 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 		if (room != nullptr)
 		{
 			SendBufferRef sendBuffer = BS_PacketHandler::MakePacket(pkt);
-			JobRef job = make_shared<Job>(&BS_GameRoom::MonsterHit, room, sendBuffer, *TargetCode, getSocketFd());
+			JobRef job = make_shared<Job>(&BS_GameRoom::MonsterHit, room, sendBuffer, *TargetCode, _player->GetCode(), pkt.Damage);
 			room->PushJobQueue(job);
 		}
 	}

@@ -185,6 +185,21 @@ void BS_GameRoom::MoveMoster()
 			childPkt.Position.Yaw = info->GetPosition().Yaw;
 			pkt.moveList.push_back(childPkt);
 		}
+		else
+		{
+			// 몬스터 스폰 시작
+			info->SetSpawn(true);
+			info->ResetSpawn();
+			cout << "몬스터 리스폰 : " << playerUUid << endl;
+
+			BS_Protocol::BS_C_MOVE childPkt;
+			childPkt.Code = info->GetCode();
+			childPkt.Position.X = info->GetPosition().X;
+			childPkt.Position.Y = info->GetPosition().Y;
+			childPkt.Position.Z = info->GetPosition().Z;
+			childPkt.Position.Yaw = info->GetPosition().Yaw;
+			pkt.moveList.push_back(childPkt);
+		}
 	}
 	if (attackPkt.attackList.size() > 0)
 	{
@@ -220,13 +235,22 @@ unordered_map<int32, shared_ptr<class BS_Monster_Info>> BS_GameRoom::GetMonsterM
 	return _monsterMap;
 }
 
-void BS_GameRoom::MonsterHit(SendBufferRef sendBuffer, int32 MonsterCode, int32 socketFd)
+void BS_GameRoom::MonsterHit(SendBufferRef sendBuffer, int32 MonsterCode, int32 socketFd, int32 Demage)
 {
 	if (_monsterMap.find(MonsterCode) != _monsterMap.end())
 	{
 		// 일단 몬스터 히트될때 경직시간은 나중 이동될 거리를 줄이는것으로 간다.
-		_monsterMap[MonsterCode]->SetMoving(false);
-		_monsterMap[MonsterCode]->SetAttackPlayerUUid(socketFd);
+		_monsterMap[MonsterCode]->TakeDemage(Demage);
+		if (!_monsterMap[MonsterCode]->DieUnit())
+		{
+			_monsterMap[MonsterCode]->SetMoving(false);
+			_monsterMap[MonsterCode]->SetAttackPlayerUUid(socketFd);
+		}
+		else
+		{
+			_monsterMap[MonsterCode]->SetMoving(true);
+			_monsterMap[MonsterCode]->SetAttackPlayerUUid(-1);
+		}
 		Broadcast(sendBuffer);
 	}
 }
