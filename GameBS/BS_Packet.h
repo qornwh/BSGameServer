@@ -48,6 +48,7 @@ namespace BS_Protocol
 	{
 		int32 Code;
 		FVector Position;
+		int32 Target;
 
 		int32 size()
 		{

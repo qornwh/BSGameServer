@@ -12,8 +12,8 @@ BS_GameRoom::BS_GameRoom(int roomId) : _roomId(roomId), _tickTime(FunctionUtils:
 	InitMapInfo();
 
 	gen = mt19937(rd());
-	uniform_int_distribution<int> disX(_mapInfo->GetMosterMap().StartX(), _mapInfo->GetMosterMap().EndX());
-	uniform_int_distribution<int> disY(_mapInfo->GetMosterMap().StartY(), _mapInfo->GetMosterMap().EndY());
+	uniform_int_distribution<int> disX(_mapInfo->GetMap().StartX() + 1000, _mapInfo->GetMap().EndX() - 1000);
+	uniform_int_distribution<int> disY(_mapInfo->GetMap().StartY() + 1000, _mapInfo->GetMap().EndY() - 1000);
 
 	for (int32 i = 1; i <= _monsterSize; i++)
 	{
@@ -110,7 +110,7 @@ uint64 BS_GameRoom::GetTickCountRoom()
 void BS_GameRoom::InitMapInfo()
 {
 	// 일단 크기는 고정이다.
-	_mapInfo = make_shared<BS_MapInfo>(30, 30);
+	_mapInfo = make_shared<BS_MapInfo>(5, 5);
 }
 
 void BS_GameRoom::SpanMoster()
@@ -127,7 +127,7 @@ void BS_GameRoom::SpanMoster()
 	}
 }
 
-void BS_GameRoom::MoveMoster()
+void BS_GameRoom::MoveMosters()
 {
 	BS_Protocol::BS_C_MOVE_LIST pkt;
 	BS_Protocol::BS_ATTACK_UNIT_LIST attackPkt;
@@ -136,17 +136,16 @@ void BS_GameRoom::MoveMoster()
 		auto info = iter.second;
 		int32 playerUUid = info->GetAttackPlayerUUid();
 		info->SetTick();
-		if (info->IsSpawned())
+		if (info->IsSpawned() && info->IsMoving())
 		{
-			if (playerUUid > 0 && _sessionMap.find(playerUUid) != _sessionMap.end() && info->OnTarget(_sessionMap[playerUUid]->getPlayer(), _mapInfo))
+			if (playerUUid > -1 && _sessionMap.find(playerUUid) != _sessionMap.end() && info->OnTarget(_sessionMap[playerUUid]->getPlayer(), _mapInfo))
 			{
 				// 타깃 추적
 				shared_ptr<BS_Player_Info> playerInfo = _sessionMap[playerUUid]->getPlayer();
-
 				bool IsAttack = info->MoveTarget(playerInfo->GetPosition());
-				if (IsAttack)
+				bool InRect = _mapInfo->InRect(info->GetPosition().X, info->GetPosition().Y, _mapInfo->GetMap());
+				if (InRect && IsAttack)
 				{
-					cout << "공격 성공 : " << playerUUid << endl;
 					BS_Protocol::BS_ATTACK_UNIT attackChildPkt;
 					attackChildPkt.Code = info->GetCode();
 					attackChildPkt.SkillCode = info->GetSkillCode();
@@ -156,23 +155,15 @@ void BS_GameRoom::MoveMoster()
 			}
 			else
 			{
-				if (info->IsMoving())
-				{
-					// int32 Yaw = info->GetPosition().Yaw + disRotate(gen);
-					// Yaw = Yaw % 360;
-					//  회전 처리는 클라에게 맏긴다.방법을 모르겟다.
-					int32 Yaw = info->GetPosition().Yaw;
-					if (_tick == 1)
-						Yaw = disRotate360(gen);
-					int32 X = info->GetPosition().X + (info->GetDistence() * (cos(Yaw / 3.14)));
-					int32 Y = info->GetPosition().Y + (info->GetDistence() * (sin(Yaw / 3.14)));
-					_mapInfo->InMonsterRect(X, Y);
-					info->SetPosition(X, Y, info->GetPosition().Z, Yaw);
-				}
-				else
-				{
-					info->SetMoving(true);
-				}
+				int32 Yaw = info->GetPosition().Yaw;
+				if (_tick == 1)
+					Yaw = disRotate(gen);
+				int32 X = info->GetPosition().X + (info->GetDistence() * (cos(Yaw / 3.14)));
+				int32 Y = info->GetPosition().Y + (info->GetDistence() * (sin(Yaw / 3.14)));
+				_mapInfo->InMonsterRect(X, Y);
+				info->SetPosition(X, Y, info->GetPosition().Z, Yaw);
+				// 그냥 이동이면 타깃 지운다.
+				playerUUid = -1;
 			}
 
 			BS_Protocol::BS_C_MOVE childPkt;
@@ -181,7 +172,12 @@ void BS_GameRoom::MoveMoster()
 			childPkt.Position.Y = info->GetPosition().Y;
 			childPkt.Position.Z = info->GetPosition().Z;
 			childPkt.Position.Yaw = info->GetPosition().Yaw;
+			childPkt.Target = playerUUid;
 			pkt.moveList.push_back(childPkt);
+		}
+		else
+		{
+			info->SetMoving(true);
 		}
 	}
 	if (attackPkt.attackList.size() > 0)
@@ -205,7 +201,7 @@ void BS_GameRoom::RoomTask()
 		if (!curLoopTask && isLoopTask.compare_exchange_strong(curLoopTask, true))
 		{
 			SpanMoster();
-			MoveMoster();
+			MoveMosters();
 			//  여기서 이제 클라한테 모두 뿌려줘야되
 			_tickTime = FunctionUtils::Utils::GetTickCount64_OS();
 			isLoopTask.exchange(false);

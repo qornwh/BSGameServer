@@ -41,15 +41,11 @@ public:
 	~BS_MapInfo();
 
 	bool InRect(int32 x, int32 y, Rect &rect);
-	void InMonsterRect(int32 &x, int32 &y);
+	bool InMonsterRect(int32 &x, int32 &y);
 
 	Rect &GetMap() { return _mapInfo; }
-	Rect &GetMosterMap() { return _monsterInfo; }
 
 private:
 	// 맵 전체 크기 계산은 width * 2, hight * 2, 중앙값 고정 한다. 0 0
 	Rect _mapInfo{0, 0, 0, 0};
-
-	// 몬스터 존재 영역 고정 한다.
-	Rect _monsterInfo{0, 0, 0, 0};
 };

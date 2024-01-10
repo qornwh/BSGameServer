@@ -175,6 +175,7 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 		childPkt.Position.Y = Position->Y;
 		childPkt.Position.Z = Position->Z;
 		childPkt.Position.Yaw = Position->Yaw;
+		childPkt.Target = -1;
 		pkt.moveList.emplace_back(childPkt);
 
 		// std::cout << " code : " << pkt.Code << " x : " << pkt.Position.X << " y : " << pkt.Position.Y << std::endl;

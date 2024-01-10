@@ -3,11 +3,6 @@
 
 BS_MapInfo::BS_MapInfo(int32 x, int32 y) : _mapInfo(x * SCALE - 100, y * SCALE - 100)
 {
-  _monsterInfo.X = 3 * SCALE;
-  _monsterInfo.Y = 3 * SCALE;
-
-  _monsterInfo.CenterX = 500;
-  _monsterInfo.CenterY = 500;
 }
 
 BS_MapInfo::~BS_MapInfo()
@@ -15,26 +10,33 @@ BS_MapInfo::~BS_MapInfo()
   cout << "~BS_MapInfo" << endl;
 }
 
-void BS_MapInfo::InMonsterRect(int32 &x, int32 &y)
+bool BS_MapInfo::InMonsterRect(int32 &x, int32 &y)
 {
+  bool flag = false;
   // 몬스터 영역 튀어나오는 값이면 제일 끝값으로 교체한다.
-  if (_monsterInfo.StartX() > x)
+  if (_mapInfo.StartX() > x)
   {
-    x = _monsterInfo.StartX();
+    x = _mapInfo.StartX();
+    flag = true;
   }
-  else if (_monsterInfo.EndX() < x)
+  else if (_mapInfo.EndX() < x)
   {
-    x = _monsterInfo.EndX();
+    x = _mapInfo.EndX();
+    flag = true;
   }
 
-  if (_monsterInfo.StartY() > x)
+  if (_mapInfo.StartY() > y)
   {
-    y = _monsterInfo.StartY();
+    y = _mapInfo.StartY();
+    flag = true;
   }
-  else if (_monsterInfo.EndY() < x)
+  else if (_mapInfo.EndY() < y)
   {
-    y = _monsterInfo.EndY();
+    y = _mapInfo.EndY();
+    flag = true;
   }
+
+  return flag;
 }
 
 bool BS_MapInfo::InRect(int32 x, int32 y, Rect &rect)

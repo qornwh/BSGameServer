@@ -236,7 +236,7 @@ bool BS_Monster_Info::OnTarget(shared_ptr<BS_Player_Info> playerInfo, shared_ptr
 {
 	if (_targetPlayerUUid > -1)
 	{
-		return mapInfo->InRect(playerInfo->GetPosition().X, playerInfo->GetPosition().Y, mapInfo->GetMosterMap());
+		return mapInfo->InRect(playerInfo->GetPosition().X, playerInfo->GetPosition().Y, mapInfo->GetMap());
 	}
 	return false;
 }

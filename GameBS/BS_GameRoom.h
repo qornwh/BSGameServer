@@ -22,7 +22,7 @@ public:
 	uint64 GetTickCountRoom();
 
 	void SpanMoster();
-	void MoveMoster();
+	void MoveMosters();
 
 	void RoomTask();
 
@@ -41,7 +41,7 @@ private:
 	shared_ptr<class BS_MapInfo> _mapInfo;
 
 	// 몬스터 개수 고정 10마리
-	int32 _monsterSize = 1;
+	int32 _monsterSize = 10;
 
 	unordered_map<int32, shared_ptr<class BS_Monster_Info>> _monsterMap;
 
@@ -49,8 +49,7 @@ private:
 
 	random_device rd;
 	mt19937 gen;
-	uniform_int_distribution<int32> disRotate{0, 20};
-	uniform_int_distribution<int32> disRotate360{0, 360};
+	uniform_int_distribution<int32> disRotate{0, 360};
 
 	Atomic<bool> isLoopTask{false};
 

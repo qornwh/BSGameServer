@@ -147,6 +147,7 @@ public:
 			bw.Write(&unit.Position.Y);
 			bw.Write(&unit.Position.Z);
 			bw.Write(&unit.Position.Yaw);
+			bw.Write(&unit.Target);
 		}
 		return sendBuffer;
 	}
