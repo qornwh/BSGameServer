@@ -41,7 +41,6 @@ void ServerService::AcceptClient(int idx)
 void ServerService::ReadClient(int idx)
 {
 	int clientFd = _serverSock->getEpollEvent(idx).data.fd;
-	cout << "clientFd !!!!!! : " << clientFd << endl;
 
 	SessionRef session = GetSession(clientFd);
 	if (session != nullptr)
