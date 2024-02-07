@@ -24,6 +24,7 @@ public:
 	void SetService(ServiceRef service) { _service = service; }
 	int getSocketFd() { return _socketFd; }
 	bool IsConnected() { return _connected; }
+	bool IsReading() { return _reading.load(); }
 
 public:
 	bool Send(SendBufferRef buffer);
@@ -32,6 +33,8 @@ public:
 	bool ReciveMessage();
 	virtual int32 OnRecv(BYTE *buffer, int32 len) { return len; }
 	void Disconnect();
+	bool CheckReading(bool value);
+	void OffReading();
 
 private:
 	/* 읽기 버퍼 */
@@ -44,6 +47,8 @@ private:
 	int _socketFd;
 	weak_ptr<Service> _service;
 	Atomic<bool> _connected{false};
+
+	Atomic<bool> _reading{false};
 	// USE_LOCK;
 	Lock lock;
 };
