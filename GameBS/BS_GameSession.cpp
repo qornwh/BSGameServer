@@ -55,7 +55,7 @@ int32 BS_GameSession::OnRecv(BYTE *buffer, int32 len)
 void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 {
 	PacketHeader *header = reinterpret_cast<PacketHeader *>(buffer);
-	int id = header->id;
+	uint16 id = header->id;
 	BYTE *messagePeekStart = &buffer[sizeof(PacketHeader)];
 
 	// cout << " packet code : " << id << " header size : " << len << endl;
@@ -258,16 +258,6 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 			JobRef job = make_shared<Job>(&BS_GameRoom::MonsterHit, room, sendBuffer, *TargetCode, _player->GetCode(), pkt.Damage);
 			room->PushJobQueue(job);
 		}
-	}
-	break;
-	case 9:
-	{
-		// 몬스터 kill, respone 메시지
-	}
-	break;
-	case 10:
-	{
-		//
 	}
 	break;
 	default:
