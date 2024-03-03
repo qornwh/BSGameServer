@@ -1,48 +1,72 @@
 {
-  "tasks": [
-    {
-      "type": "shell",
-      "label": "make Debug",
-      "command": "make",
-      "args": [
-        "all"
-      ],
-      "options": {
-        "cwd": "/usr/bin",
-        "env": {
-          "DEBUG": "true"
-        }
-      },
-      "problemMatcher": [
-        "$gcc"
-      ],
-      "group": "build",
-      "detail": "디버거에서 생성된 작업입니다."
-    },
-    {
-      "type": "cppbuild",
-      "label": "C/C++: g++ 활성 파일 빌드",
-      "command": "/usr/bin/g++",
-      "args": [
-        "-fdiagnostics-color=always",
-        "-std=c++17",
-        "-Wall",
-        "-fno-strict-aliasing",
-        "-g",
-        "${fileDirname}/**.cpp",
-        "${workspaceFolder}/CoreLib/**.cpp",
-        "-o",
-        "${fileDirname}/${fileBasenameNoExtension}"
-      ],
-      "options": {
-        "cwd": "/usr/bin"
-      },
-      "problemMatcher": [
-        "$gcc"
-      ],
-      "group": "build",
-      "detail": "디버거에서 생성된 작업입니다."
-    }
-  ],
-  "version": "2.0.0"
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "make Debug",
+            "command": "make",
+            "args": [
+                "all"
+            ],
+            "options": {
+                "cwd": "/usr/bin",
+                "env": {
+                    "DEBUG": "true"
+                }
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "디버거에서 생성된 작업입니다."
+        },
+        {
+            "type": "cppbuild",
+            "label": "C/C++: g++ 활성 파일 빌드",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-std=c++17",
+                "-Wall",
+                "-fno-strict-aliasing",
+                "-g",
+                "${fileDirname}/BS_GameRoom.cpp",
+                "${fileDirname}/BS_GameSession.cpp",
+                "${fileDirname}/BS_PacketHandler.cpp",
+                "${fileDirname}/BS_Pch.cpp",
+                "${fileDirname}/BS_GameServerService.cpp",
+                "${fileDirname}/BS_Packet.cpp",
+                "${fileDirname}/main.cpp",
+                "${fileDirname}/BS_GameRoomManger.cpp",
+                "${fileDirname}/BS_MapInfo.cpp",
+                "${fileDirname}/BS_Player.cpp",
+                "${workspaceFolder}/CoreLib/CoreGlobal.cpp",
+                "${workspaceFolder}/CoreLib/EpollFD.cpp",
+                "${workspaceFolder}/CoreLib/Pch.cpp",
+                "${workspaceFolder}/CoreLib/Session.cpp",
+                "${workspaceFolder}/CoreLib/LockUtils.cpp",
+                "${workspaceFolder}/CoreLib/ServerSock.cpp",
+                "${workspaceFolder}/CoreLib/Job.cpp",
+                "${workspaceFolder}/CoreLib/RecvBuffer.cpp",
+                "${workspaceFolder}/CoreLib/SocketUtils.cpp",
+                "${workspaceFolder}/CoreLib/CoreTLS.cpp",
+                "${workspaceFolder}/CoreLib/Service.cpp",
+                "${workspaceFolder}/CoreLib/JobQueue.cpp",
+                "${workspaceFolder}/CoreLib/SendBuffer.cpp",
+                "${workspaceFolder}/CoreLib/ThreadManager.cpp",
+                //"${fileDirname}/**.cpp",             // 갑자기 안되는 이유는 모르겠다. 지금까지 잘써왔는데...
+                //"${workspaceFolder}/CoreLib/**.cpp", // 갑자기 안되는 이유는 모르겠다. 지금까지 잘써왔는데...
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}"
+            ],
+            "options": {
+                "cwd": "/usr/bin"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "디버거에서 생성된 작업입니다."
+                }
+    ],
+    "version": "2.0.0"
 }
