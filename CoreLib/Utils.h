@@ -64,13 +64,7 @@ namespace FunctionUtils
       float y_forward = 0;
       normalizeVector(x, y);
       double dot = dotProduct(x_forward, y_forward, x, y);
-      // float mag1 = magnitude(x1, y1);
-      // float mag2 = magnitude(x2, y2);
 
-      // 두 벡터의 내적의 크기와 벡터의 크기를 이용하여 각도 계산
-      // float angleCos = dot / (mag1 * mag2);
-
-      // acos 함수를 사용하여 라디안으로 변환된 각도를 계산
       double radian = acos(dot);
       float angleRad = radianToDegree(radian);
 

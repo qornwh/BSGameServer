@@ -59,6 +59,78 @@ void BS_GameRoom::CreatePlayerInfo()
 void BS_GameRoom::AddSession(shared_ptr<BS_GameSession> gameSession)
 {
 	_sessionMap[gameSession->getSocketFd()] = gameSession;
+
+	{
+		BS_Protocol::BS_LOAD_DATA pkt;
+
+		for (auto &iter : _sessionMap)
+		{
+			int fd = iter.first;
+			if (fd != gameSession->getSocketFd())
+			{
+				shared_ptr<BS_GameSession> gameSession = static_pointer_cast<BS_GameSession>(iter.second);
+				if (gameSession->getPlayer() != nullptr)
+				{
+					shared_ptr<BS_Player_Info> info = gameSession->getPlayer();
+					BS_Protocol::Player player{info->GetType(), info->GetHp(), info->GetCode()};
+					player.Type = info->GetType();
+					player.Hp = info->GetHp();
+					player.Code = info->GetCode();
+					player.Position.X = info->GetPosition().X;
+					player.Position.Y = info->GetPosition().Y;
+					player.Position.Z = info->GetPosition().Z;
+					player.Position.Yaw = info->GetPosition().Yaw;
+					player.NameLen = info->GetNameLen();
+					player.Name = info->GetName();
+					pkt.players.push_back(player);
+				}
+			}
+		}
+
+		for (auto &iter : _monsterMap)
+		{
+			auto info = iter.second;
+			if (info->IsSpawned())
+			{
+				BS_Protocol::Monster monster{info->GetType(), info->GetHp(), info->GetCode()};
+				monster.Type = info->GetType();
+				monster.Hp = info->GetHp();
+				monster.Code = info->GetCode();
+				monster.Target = info->GetAttackPlayerUUid();
+				monster.Position.X = info->GetPosition().X;
+				monster.Position.Y = info->GetPosition().Y;
+				monster.Position.Z = info->GetPosition().Z;
+				monster.Position.Yaw = info->GetPosition().Yaw;
+				monster.NameLen = info->GetNameLen();
+				monster.Name = info->GetName();
+				pkt.monsters.push_back(monster);
+			}
+		}
+
+		SendBufferRef sendBuffer = BS_PacketHandler::MakePacket(pkt);
+		gameSession->Send(sendBuffer);
+		cout << "send :: " << pkt.size() << endl;
+	}
+
+	{
+		shared_ptr<BS_Player_Info> info = gameSession->getPlayer();
+		BS_Protocol::Player pkt{info->GetType(), info->GetHp(), info->GetCode()};
+		pkt.NameLen = info->GetNameLen();
+		pkt.Name = info->GetName();
+
+		{
+			SendBufferRef sendBuffer = BS_PacketHandler::MakePacket(pkt);
+			// 가상함수 선언해둠 캐스팅(GameServerService) 필요 x
+			BroadcastAnother(sendBuffer, gameSession->getSocketFd());
+			// 내 원래 생각은 여기서 BS_GameServerService에 플레이어 정보 넣어두려 했음 그러나 캐스팅 어떻게 하는지 몰라 포기
+		}
+
+		{
+			SendBufferRef sendBuffer = BS_PacketHandler::MakeMyPacket(pkt);
+			// 가상함수 선언해둠 캐스팅(GameServerService) 필요 x
+			gameSession->Send(sendBuffer);
+		}
+	}
 }
 
 void BS_GameRoom::DelSession(shared_ptr<BS_GameSession> gameSession)

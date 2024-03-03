@@ -22,8 +22,6 @@ BS_GameSession::BS_GameSession(int socketFd) : Session(socketFd)
 BS_GameSession::~BS_GameSession()
 {
 	_player = nullptr;
-
-	// cout << "disconnect GameSession !!!" << endl;
 }
 
 int32 BS_GameSession::OnRecv(BYTE *buffer, int32 len)
@@ -76,83 +74,12 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 		getPlayer()->SetType(*type);
 
 		shared_ptr<BS_GameRoom> room = GBSRoomManger->getRoom(0);
-		// 현재 접속된 모든 정보 전달. // 일단 gameroom에 넣어야된다. 락땜에
-		{
-			BS_Protocol::BS_LOAD_DATA pkt;
-
-			for (auto &iter : GetService()->GetSessionMap())
-			{
-				int fd = iter.first;
-				if (fd != getSocketFd())
-				{
-					shared_ptr<BS_GameSession> gameSession = static_pointer_cast<BS_GameSession>(iter.second);
-					if (gameSession->getPlayer() != nullptr)
-					{
-						shared_ptr<BS_Player_Info> info = gameSession->getPlayer();
-						BS_Protocol::Player player{info->GetType(), info->GetHp(), info->GetCode()};
-						player.Type = info->GetType();
-						player.Hp = info->GetHp();
-						player.Code = info->GetCode();
-						player.Position.X = info->GetPosition().X;
-						player.Position.Y = info->GetPosition().Y;
-						player.Position.Z = info->GetPosition().Z;
-						player.Position.Yaw = info->GetPosition().Yaw;
-						player.NameLen = info->GetNameLen();
-						player.Name = info->GetName();
-						pkt.players.push_back(player);
-					}
-				}
-			}
-
-			for (auto &iter : room->GetMonsterMap())
-			{
-				auto info = iter.second;
-				if (info->IsSpawned())
-				{
-					BS_Protocol::Monster monster{info->GetType(), info->GetHp(), info->GetCode()};
-					monster.Type = info->GetType();
-					monster.Hp = info->GetHp();
-					monster.Code = info->GetCode();
-					monster.Target = info->GetAttackPlayerUUid();
-					monster.Position.X = info->GetPosition().X;
-					monster.Position.Y = info->GetPosition().Y;
-					monster.Position.Z = info->GetPosition().Z;
-					monster.Position.Yaw = info->GetPosition().Yaw;
-					monster.NameLen = info->GetNameLen();
-					monster.Name = info->GetName();
-					pkt.monsters.push_back(monster);
-				}
-			}
-			SendBufferRef sendBuffer = BS_PacketHandler::MakePacket(pkt);
-			Send(sendBuffer);
-			cout << "send packet data size : " << pkt.size() + sizeof(PacketHeader) << endl;
-		}
 
 		// 내정보를 모든 클라에게 전송 broadCast
+		if (room != nullptr)
 		{
-			shared_ptr<BS_Player_Info> info = getPlayer();
-			BS_Protocol::Player pkt{info->GetType(), info->GetHp(), info->GetCode()};
-			pkt.NameLen = info->GetNameLen();
-			pkt.Name = info->GetName();
-
-			{
-				SendBufferRef sendBuffer = BS_PacketHandler::MakePacket(pkt);
-				// 가상함수 선언해둠 캐스팅(GameServerService) 필요 x
-				GetService()->Broadcast(sendBuffer, getSocketFd());
-				// 내 원래 생각은 여기서 BS_GameServerService에 플레이어 정보 넣어두려 했음 그러나 캐스팅 어떻게 하는지 몰라 포기
-			}
-
-			{
-				SendBufferRef sendBuffer = BS_PacketHandler::MakeMyPacket(pkt);
-				// 가상함수 선언해둠 캐스팅(GameServerService) 필요 x
-				Send(sendBuffer);
-			}
-
-			if (room != nullptr)
-			{
-				JobRef job = make_shared<Job>(&BS_GameRoom::AddSession, room, static_pointer_cast<BS_GameSession>(shared_from_this()));
-				room->PushJobQueue(job);
-			}
+			JobRef job = make_shared<Job>(&BS_GameRoom::AddSession, room, static_pointer_cast<BS_GameSession>(shared_from_this()));
+			room->PushJobQueue(job);
 		}
 	}
 	break;
@@ -178,11 +105,14 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 		childPkt.Target = -1;
 		pkt.moveList.emplace_back(childPkt);
 
-		// std::cout << " code : " << pkt.Code << " x : " << pkt.Position.X << " y : " << pkt.Position.Y << std::endl;
-
 		SendBufferRef sendBuffer = BS_PacketHandler::MakePacket(pkt);
-		GetService()->Broadcast(sendBuffer, getSocketFd());
 		getPlayer()->SetPosition(Position->X, Position->Y, Position->Z, Position->Yaw);
+		shared_ptr<BS_GameRoom> room = GBSRoomManger->getRoom(0);
+		if (room != nullptr)
+		{
+			JobRef job = make_shared<Job>(&BS_GameRoom::Broadcast, room, sendBuffer);
+			room->PushJobQueue(job);
+		}
 	}
 	break;
 	case 4:
