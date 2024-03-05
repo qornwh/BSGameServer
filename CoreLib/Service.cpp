@@ -60,19 +60,6 @@ void ServerService::ReadClient(int idx)
 
 bool ServerService::Register(int clientFd)
 {
-	// sockaddr_in client_addr;
-	// socklen_t len;
-	// getpeername(clientFd, (sockaddr*)&client_addr, &len);
-
-	// if (_addrMap.find(client_addr.sin_addr.s_addr) != _addrMap.end())
-	//{
-	//	ReleaseSession(GetSession(_addrMap[client_addr.sin_addr.s_addr]));
-	//	_addrMap.erase(client_addr.sin_addr.s_addr);
-	// }
-
-	// if (GetSessionMap().find(clientFd) != GetSessionMap().end())
-	//	ReleaseSession(GetSessionMap()[clientFd]);
-
 	if (_serverSock->Register(clientFd))
 	{
 		// 클라 세션 생성
