@@ -12,9 +12,6 @@ void Lock::ReadLock()
 				return;
 			}
 		}
-
-		// To-do crash 처리
-
 		this_thread::yield();
 	}
 }
@@ -32,15 +29,12 @@ void Lock::WriteLock()
 		{
 			int readExpected = 0;
 			int writeExpected = 0;
-			// 밑에 cas 2개쓴거 한번에 안됨 문젱있음, read write 한변수에 담고 cas 처리해야됨
+			// 밑에 cas 2개쓴거 한번에 안됨 문제있음, read write 한변수에 담고 cas 처리해야됨
 			if (readCount.compare_exchange_strong(readExpected, 0) && writeCount.compare_exchange_strong(writeExpected, 1))
 			{
 				return;
 			}
 		}
-
-		// To-do crash 처리
-
 		this_thread::yield();
 	}
 }

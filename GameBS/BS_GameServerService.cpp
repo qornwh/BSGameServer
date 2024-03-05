@@ -23,12 +23,6 @@ void BS_GameServerService::Broadcast(SendBufferRef buffer)
 		int _socketFd = sessionPair.first;
 		SessionRef session = GetSession(_socketFd);
 		bool isSend = session->Send(buffer);
-		// if (!isSend)
-		//{
-		//	session->Disconnect();
-		//	ReleaseSession(session);
-		//	// 읽어올때 끊는 걸로 가자!!
-		// }
 	}
 }
 
@@ -46,12 +40,6 @@ void BS_GameServerService::Broadcast(SendBufferRef buffer, int32 socketFd)
 			{
 				session->Send(buffer);
 			}
-			/*else
-			{
-				session->Disconnect();
-				ReleaseSession(session);
-				// 읽어올때 끊는 걸로 가자!!
-			}*/
 		}
 	}
 }
@@ -65,13 +53,6 @@ SessionRef BS_GameServerService::CreateSession(int32 i)
 
 void BS_GameServerService::ReleaseSessionMesssage(SessionRef session)
 {
-	// BS_Protocol::BS_CLOSE_PLAYER pkt;
-	// pkt.Code = session->getSocketFd();
-
-	// SendBufferRef sendBuffer = BS_PacketHandler::MakeMyPacket(pkt);
-
-	// Broadcast(sendBuffer, session->getSocketFd());
-
 	shared_ptr<BS_GameRoom> room = GBSRoomManger->getRoom(0);
 	if (room != nullptr)
 	{

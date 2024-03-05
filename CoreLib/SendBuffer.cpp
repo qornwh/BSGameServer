@@ -51,6 +51,7 @@ void SendBufferChunk::Close(uint32 writeSize)
 
 SendBufferRef SendBufferManager::Open(uint32 size)
 {
+	// lts로컬 스레드 스토리지에 선언해둔 LSendBufferChunk에 담고 락없이 sendbuffer 풀링을 이용함
 	if (LSendBufferChunk == nullptr)
 	{
 		LSendBufferChunk = Pop(); // WRITE_LOCK
