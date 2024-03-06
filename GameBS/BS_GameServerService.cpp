@@ -22,7 +22,7 @@ void BS_GameServerService::Broadcast(SendBufferRef buffer)
 	{
 		int _socketFd = sessionPair.first;
 		SessionRef session = GetSession(_socketFd);
-		bool isSend = session->Send(buffer);
+		session->Send(buffer);
 	}
 }
 

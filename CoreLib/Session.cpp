@@ -65,7 +65,7 @@ void Session::Connect()
 
 bool Session::ReciveMessage()
 {
-	int strLen = recv(_socketFd, _recvBuffer.WritePos(), _recvBuffer.FreeSize(), 0);
+	int32 strLen = recv(_socketFd, _recvBuffer.WritePos(), _recvBuffer.FreeSize(), 0);
 
 	if (strLen <= 0)
 	{
@@ -80,13 +80,9 @@ bool Session::ReciveMessage()
 			return false;
 		}
 
-		int dataSize = _recvBuffer.DataSize();
-
+		int32 dataSize = _recvBuffer.DataSize();
 		BYTE *buffer = _recvBuffer.ReadPos();
-
-		// cout << strLen << endl;
 		int32 processLen = OnRecv(buffer, dataSize);
-		// cout << "session OnRecv" << endl;
 		if (!_recvBuffer.OnRead(processLen) || processLen <= 0 || dataSize < processLen)
 		{
 			Disconnect();

@@ -54,14 +54,12 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 {
 	PacketHeader *header = reinterpret_cast<PacketHeader *>(buffer);
 	uint16 id = header->id;
-	BYTE *messagePeekStart = &buffer[sizeof(PacketHeader)];
 
 	// cout << " packet code : " << id << " header size : " << len << endl;
 	switch (id)
 	{
 	case 1: // 로드
 	{
-		// 일단 정리필요
 		int offset = sizeof(PacketHeader);
 
 		uint16 *type = PacketUtils::ReadBufferPtr<uint16>(buffer, offset);
@@ -75,17 +73,11 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 
 		shared_ptr<BS_GameRoom> room = GBSRoomManger->getRoom(0);
 
-		// 내정보를 모든 클라에게 전송 broadCast
 		if (room != nullptr)
 		{
 			JobRef job = make_shared<Job>(&BS_GameRoom::AddSession, room, static_pointer_cast<BS_GameSession>(shared_from_this()));
 			room->PushJobQueue(job);
 		}
-	}
-	break;
-	case 2: // 테스트 클라이언트 !!
-	{
-		int offset = sizeof(PacketHeader);
 	}
 	break;
 	case 3: // 이동 일단 그냥 한번 해보자 실시간으로 주나 그냥 올때마다 주나 차이가 없을지도 몰라

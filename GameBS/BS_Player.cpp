@@ -131,7 +131,6 @@ bool BS_Monster_Info::MoveTarget(FVector &targetPosition)
 		float delY = targetPosition.Y - _position.Y;
 
 		float radian = atan2(delY, delX);
-		float theta = FunctionUtils::Utils::radianToDegree(radian);
 
 		_position.X += (_distence * cos(radian));
 		_position.Y += (_distence * sin(radian));

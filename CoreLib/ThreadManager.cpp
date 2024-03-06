@@ -10,6 +10,8 @@ void ThreadManager::ThreadTLS()
 
 void ThreadManager::ThreadDestory()
 {
+	// 스마트 포인터 참조 제거
+	LSendBufferChunk = nullptr;
 }
 
 void ThreadManager::ThreadJoinAll()

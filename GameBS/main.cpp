@@ -35,10 +35,10 @@ int main()
 	BS_GameServerServiceRef serverRef = make_shared<BS_GameServerService>();
 
 	ASSERT_CRASH(serverRef->Start());
-	{
-		ThreadManager::GetInstance().CreateThread([&serverRef]()
-																							{ RunTask(serverRef); });
-	}
+
+	ThreadManager::GetInstance().CreateThread([&serverRef]()
+																						{ RunTask(serverRef); });
+
 	RunTask(serverRef);
 
 	// 몬스터 구현
