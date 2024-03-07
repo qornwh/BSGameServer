@@ -9,19 +9,6 @@ void JobQueue::Push(JobRef job)
 		WriteLockGuard wLock(lock, "JobQueue::Push");
 		_q.push(job);
 	}
-
-	if (jobCount == 0)
-	{
-		if (!_isThreadUsed)
-		{
-			// 사용중 아닐경우 바로 Execute
-			Execute();
-		}
-		else
-		{
-			// 사용중일경우 다른스레드로 넘기기 위해 글로벌 변수에 추가 구현 필요
-		}
-	}
 }
 
 void JobQueue::Execute()

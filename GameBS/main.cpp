@@ -25,6 +25,7 @@ void RunTask(BS_GameServerServiceRef serverRef)
 		if (room != nullptr)
 		{
 			// 게임룸 Task
+			room->Execute();
 			room->RoomTask();
 		}
 	}
