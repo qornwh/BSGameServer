@@ -13,13 +13,9 @@ namespace FunctionUtils
     static uint64 GetTickCount64_OS()
     {
       uint64 tick;
-      // #if defined(WIN32) || defined(WIN64)
-      //       tick = GetTickCount64();
-      // #else
       struct timespec tp;
       clock_gettime(CLOCK_MONOTONIC, &tp);
       tick = (tp.tv_sec * 1000ull) + (tp.tv_nsec / 1000ull / 1000ull);
-      // #endif
       return tick;
     }
     // 벡터 내적 공식 사용
@@ -27,8 +23,8 @@ namespace FunctionUtils
     {
       return x1 * x2 + y1 * y2;
     }
-    // 벡터 외적 공식 사용
-    static double crossProduct(double x1, double y1, double x2, double y2)
+    // 벡터 외적 각 +- 판단
+    static double crossProductAngle(double x1, double y1, double x2, double y2)
     {
       return x1 * y2 - x2 * y1;
     }
@@ -68,7 +64,7 @@ namespace FunctionUtils
       double radian = acos(dot);
       float angleRad = radianToDegree(radian);
 
-      if (crossProduct(x_forward, y_forward, x, y) > 0)
+      if (crossProductAngle(x_forward, y_forward, x, y) > 0)
       {
         return angleRad;
       }

@@ -140,43 +140,9 @@ bool BS_Monster_Info::MoveTarget(FVector &targetPosition)
 
 bool BS_Monster_Info::CheckAttackTarget(FVector &targetPosition)
 {
-	// 일단 범위 하드코딩 => 나중에 공격 스킬 범위를 지정해둔다.. 그럼따라서 파라미터 추가 필요할듯
-	// 범위를 임의의점 4개로 생각하면 계산로직이 커지기 때문에 좌표이동을 해서 직각 사각형을 만들어서 생각한다.
-
-	// 언리얼 포워드벡터는 (1,0,0) 즉 x축이다
-
-	// 생각을 바꿔야 겠다.
-	// 그냥 범위를 몬스터 주위로 바꾸고 rotate는 클라에 맏긴다. => rotate까지 서버에서 처리하려면 생각보다 어렵다. 이게 만약 상하좌우만 있으면 편한데 360체크해야되서 tick마다 처리할수도 없는 노릇이다.
-
-	/*
-		// 몬스터 정면을 바라보는 위치에 타깃을 체크하는 로직 => 보류
-		const int32 targetX = targetPosition.X - _position.X;
-		const int32 targetY = targetPosition.Y - _position.Y;
-		const float targetXY = sqrt(pow(targetX, 2) + pow(targetY, 2)); // 빗변
-
-		const float newTargetX = cosf(_position.Yaw) * targetXY; // 변환된 타겟 좌표 x
-		const float newTargetY = sinf(_position.Yaw) * targetXY; // 변환된 타겟 좌표 y
-
-		const int x = 100; // 탐색 범위
-		const int y = 500; // 탐색 범위
-		const int startX = -x / 2;
-		const int endX = x / 2;
-		const int startY = -y / 2;
-		const int endY = y / 2;
-
-		if (startX <= newTargetX && newTargetX <= endX && startY <= newTargetY && newTargetY <= endY)
-			return true;
-
-		return false;
-	*/
-
 	// 몬스터 좌표에 원안 체크
 	int32 radius = 200;
-
 	int32 dist = sqrt(pow(_position.X - targetPosition.X, 2) + pow(_position.Y - targetPosition.Y, 2));
-
-	// cout << "dist : " << dist << " radius : " << radius << " target x :" << targetPosition.X << " target y : " << targetPosition.Y << endl;
-	// cout << "monster x : " << _position.X << " monster y : " << _position.Y << endl;
 	if (radius >= dist)
 	{
 		float theta = FunctionUtils::Utils::calculateAngle(_position.X, _position.Y, targetPosition.X, targetPosition.Y);
