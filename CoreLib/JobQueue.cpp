@@ -13,10 +13,11 @@ void JobQueue::Push(JobRef job)
 
 void JobQueue::Execute()
 {
-	const int32 jobCount = static_cast<int32>(_q.size());
+	int32 jobCount = 0;
 	queue<JobRef> jobs;
 	{
 		WriteLockGuard wLock(lock, "JobQueue::Execute");
+		jobCount = static_cast<int32>(_q.size());
 		for (int32 i = 0; i < jobCount; i++)
 		{
 			jobs.push(_q.front());

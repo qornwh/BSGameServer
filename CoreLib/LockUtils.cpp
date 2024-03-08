@@ -42,5 +42,5 @@ void Lock::WriteLock()
 void Lock::WriteUnLock()
 {
 	ASSERT_CRASH(readCount.load() == 0);
-	writeCount.fetch_sub(1);
+	writeCount = 0;
 }
