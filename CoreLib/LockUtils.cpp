@@ -4,10 +4,11 @@ void Lock::ReadLock()
 {
 	while (true)
 	{
-		int cur = readCount.load();
 		for (int i = 0; i < MAX_SPIN_COUNT; i++)
 		{
-			if (readCount.compare_exchange_strong(cur, cur + 1))
+			int readExpected = readCount.load();
+			int writeExpected = 0;
+			if (readCount.compare_exchange_strong(readExpected, readExpected + 1) && writeCount.compare_exchange_strong(writeExpected, 0))
 			{
 				return;
 			}

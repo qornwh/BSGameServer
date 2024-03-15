@@ -25,19 +25,21 @@ private:
 class ReadLockGuard
 {
 public:
-	ReadLockGuard(Lock& lock, const char* name) : _lock(lock), _name(name) { _lock.ReadLock(); }
+	ReadLockGuard(Lock &lock, const char *name) : _lock(lock), _name(name) { _lock.ReadLock(); }
 	~ReadLockGuard() { _lock.ReadUnLock(); }
+
 private:
-	Lock& _lock;
-	const char* _name;
+	Lock &_lock;
+	const char *_name;
 };
 
 class WriteLockGuard
 {
 public:
-	WriteLockGuard(Lock& lock, const char* name) : _lock(lock), _name(name) { _lock.WriteLock(); }
+	WriteLockGuard(Lock &lock, const char *name) : _lock(lock), _name(name) { _lock.WriteLock(); }
 	~WriteLockGuard() { _lock.WriteUnLock(); }
+
 private:
-	Lock& _lock;
-	const char* _name;
+	Lock &_lock;
+	const char *_name;
 };
