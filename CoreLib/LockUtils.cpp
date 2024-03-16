@@ -1,15 +1,19 @@
 #include "LockUtils.h"
 
+Lock::Lock()
+{
+	pthread_rwlock_init(&rwlock, nullptr);
+}
+
 void Lock::ReadLock()
 {
 	while (true)
 	{
 		for (int i = 0; i < MAX_SPIN_COUNT; i++)
 		{
-			int readExpected = readCount.load();
-			int writeExpected = 0;
-			if (readCount.compare_exchange_strong(readExpected, readExpected + 1) && writeCount.compare_exchange_strong(writeExpected, 0))
+			if (pthread_rwlock_tryrdlock(&rwlock) == 0)
 			{
+				pthread_rwlock_rdlock(&rwlock);
 				return;
 			}
 		}
@@ -19,7 +23,7 @@ void Lock::ReadLock()
 
 void Lock::ReadUnLock()
 {
-	readCount.fetch_sub(1);
+	pthread_rwlock_unlock(&rwlock);
 }
 
 void Lock::WriteLock()
@@ -28,11 +32,10 @@ void Lock::WriteLock()
 	{
 		for (int i = 0; i < MAX_SPIN_COUNT; i++)
 		{
-			int readExpected = 0;
-			int writeExpected = 0;
-			// 밑에 cas 2개쓴거 한번에 안됨 문제있음, read write 한변수에 담고 cas 처리해야됨
-			if (readCount.compare_exchange_strong(readExpected, 0) && writeCount.compare_exchange_strong(writeExpected, 1))
+			// pthread_rwlock_tryrdlock 하지 않은 이유는 2개 다하면 EBUSY라는 모드가 되서 pthread_rwlock_trywrlock만한다. pthread_rwlock_trywrlock만 해도 read 걸린다
+			if (pthread_rwlock_trywrlock(&rwlock) == 0)
 			{
+				pthread_rwlock_wrlock(&rwlock);
 				return;
 			}
 		}
@@ -42,6 +45,5 @@ void Lock::WriteLock()
 
 void Lock::WriteUnLock()
 {
-	ASSERT_CRASH(readCount.load() == 0);
-	writeCount = 0;
+	pthread_rwlock_unlock(&rwlock);
 }

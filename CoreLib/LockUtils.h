@@ -1,21 +1,22 @@
 #pragma once
 
 #include <thread>
+#include <pthread.h>
 
 #include "Pch.h"
 
 class Lock
 {
 public:
+	Lock();
 	void ReadLock();
 	void ReadUnLock();
 	void WriteLock();
 	void WriteUnLock();
 
 private:
-	atomic<int> readCount;
-	atomic<int> writeCount;
 	const int MAX_SPIN_COUNT = 5000;
+	pthread_rwlock_t rwlock;
 };
 
 /* ------------------
