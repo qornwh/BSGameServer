@@ -102,7 +102,7 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 		shared_ptr<BS_GameRoom> room = GBSRoomManger->getRoom(0);
 		if (room != nullptr)
 		{
-			JobRef job = make_shared<Job>(&BS_GameRoom::Broadcast, room, sendBuffer);
+			JobRef job = make_shared<Job>(&BS_GameRoom::BroadcastPushMessage, room, sendBuffer);
 			room->PushJobQueue(job);
 		}
 	}
