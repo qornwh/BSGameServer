@@ -17,6 +17,7 @@
 BS_GameSession::BS_GameSession(int socketFd) : Session(socketFd)
 {
 	// cout << "create GameSession" << endl;
+	CreatePlayerInfo();
 }
 
 BS_GameSession::~BS_GameSession()
@@ -67,7 +68,6 @@ void BS_GameSession::HandlePacket(BYTE *buffer, int32 len)
 
 		BYTE *name = PacketUtils::ReadBufferStr(buffer, offset, *nameLen);
 
-		CreatePlayerInfo();
 		getPlayer()->SetName(name, *nameLen);
 		getPlayer()->SetType(*type);
 
