@@ -10,8 +10,8 @@
 class Service : public enable_shared_from_this<Service>
 {
 public:
-	Service() {};
-	~Service() {};
+	Service(){};
+	~Service(){};
 
 public:
 	virtual void Broadcast(SendBufferRef buffer);
@@ -67,8 +67,11 @@ public:
 	void Dispatch();
 	void ReleaseSession(SessionRef session);
 
-	virtual void ReleaseSessionMesssage(SessionRef session) {};
+	virtual void ReleaseSessionMesssage(SessionRef session){};
+	bool CheckReading(bool value);
+	void OffReading();
 
 private:
 	shared_ptr<ServerSock> _serverSock;
+	Atomic<bool> _reading{false};
 };

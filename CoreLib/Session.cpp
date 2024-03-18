@@ -101,16 +101,6 @@ void Session::Disconnect()
 	_connected.exchange(false);
 }
 
-bool Session::CheckReading(bool value)
-{
-	return _reading.compare_exchange_strong(value, true);
-}
-
-void Session::OffReading()
-{
-	_reading.exchange(false);
-}
-
 PacketSession::PacketSession(int socketFd) : Session(socketFd)
 {
 }

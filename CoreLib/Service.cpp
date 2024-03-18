@@ -45,16 +45,9 @@ void ServerService::ReadClient(int idx)
 	SessionRef session = GetSession(clientFd);
 	if (session != nullptr)
 	{
-		// atomic으로 compare_exchange_strong을 한 이유.
-		// 멀티스레드에서 동시에 읽어오는 이슈가 있어서 사용. fd읽는 도중에 또 같은 fd를 읽어버림 !!!
-		bool isReading = session->IsReading();
-		if (!isReading && session->CheckReading(isReading))
-		{
-			bool isRecv = session->ReciveMessage();
-			session->OffReading();
-			if (!isRecv)
-				ReleaseSession(session);
-		}
+		bool isRecv = session->ReciveMessage();
+		if (!isRecv)
+			ReleaseSession(session);
 	}
 }
 
@@ -72,20 +65,27 @@ bool ServerService::Register(int clientFd)
 
 void ServerService::Dispatch()
 {
-	int eventCount = EventCount();
-
-	ASSERT_CRASH(eventCount > -1);
-
-	for (int i = 0; i < eventCount; i++)
+	// atomic으로 compare_exchange_strong을 한 이유.
+	// 멀티스레드에서 동시에 읽어오는 이슈가 있어서 사용. fd읽는 도중에 또 같은 fd를 읽어버림 !!!
+	int isReading = _reading;
+	if (!_reading && CheckReading(isReading))
 	{
-		if (isServerFd(i))
+		int eventCount = EventCount();
+
+		ASSERT_CRASH(eventCount > -1);
+
+		for (int i = 0; i < eventCount; i++)
 		{
-			AcceptClient(i);
+			if (isServerFd(i))
+			{
+				AcceptClient(i);
+			}
+			else
+			{
+				ReadClient(i);
+			}
 		}
-		else
-		{
-			ReadClient(i);
-		}
+		OffReading();
 	}
 }
 
@@ -150,4 +150,14 @@ void ServerService::ReleaseSession(SessionRef session)
 	_serverSock->Delete(session->getSocketFd());
 
 	ReleaseSessionMesssage(session);
+}
+
+bool ServerService::CheckReading(bool value)
+{
+	return _reading.compare_exchange_strong(value, true);
+}
+
+void ServerService::OffReading()
+{
+	_reading.exchange(false);
 }
