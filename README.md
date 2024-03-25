@@ -28,6 +28,6 @@
 
 ### core dump 
 sudo systemctl disable apport - 디폴트로 설정되어있어서 끈다
-sudo sysctl -w kernel.core_pattern=core.%u.%p.%t - 생성될 core dump파일 이름형식을 지정
+sudo sysctl -w kernel.core_pattern=core.%e - 생성될 core dump파일 이름형식을 지정
 ulimit -c unlimited - core dump 생성 제한 해제
 gdb사용법 분석필요
