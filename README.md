@@ -25,3 +25,9 @@
 1. ./CoreLib 경로에서 make 실행
 2. ../ 상위로 올라가서 make 실행
 3. 실행되면 build 폴더에 GAMESERVER파일 실행
+
+### core dump 
+sudo systemctl disable apport - 디폴트로 설정되어있어서 끈다
+sudo sysctl -w kernel.core_pattern=core.%u.%p.%t - 생성될 core dump파일 이름형식을 지정
+ulimit -c unlimited - core dump 생성 제한 해제
+gdb사용법 분석필요

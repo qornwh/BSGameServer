@@ -52,6 +52,16 @@
       //],
       "preLaunchTask": "make Debug"
       //"miDebuggerPath": "/usr/bin/gdb"
+    },
+    {
+        "type": "cppdbg",
+        "request": "launch",
+        "name": "Open a core dump(c/c++)",
+        "program": "${workspaceFolder}/GameBS/main",
+        "coreDumpPath": "${workspaceFolder}/build/core.1000.3790.1711324334",
+        "cwd": "${workspaceFolder}",
+        "MIMode": "gdb", // or gdb, if you are using gdb
+        "miDebuggerPath": "/usr/bin/gdb"
     }
   ],
   "version": "2.0.0"
