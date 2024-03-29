@@ -1,5 +1,13 @@
 # Linux Epoll을 이용한 온라인 게임 서버 구현
 
+## 전체 영상
+
+<iframe width="800" height="515" src="https://www.youtube.com/embed/NIEy5bpEhBk" frameborder="0" allowfullscreen></iframe>
+<iframe width="800" height="600" src="https://www.youtube.com/embed/ymCHGSQRh6s" frameborder="0" allowfullscreen></iframe>
+
+## 포트폴리오 문서 주소
+- [**포트폴리오**](https://qornwh.github.io/bjsBlog.github.io/posts/OnlineGame-EpollServer-0/)
+
 ## 구현 목록
 
 1. 플레이어 다중 접속
