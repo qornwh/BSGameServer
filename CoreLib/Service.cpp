@@ -23,15 +23,24 @@ void ServerService::AcceptClient(int idx)
 {
 	if (isEpollIn(idx))
 	{
-		int clientFd = _serverSock->AccpetClient();
-		ASSERT_CRASH(clientFd > 0);
-		if (SocketUtils::SetNonBlockSocket(clientFd))
+		while (true)
 		{
-			// socket fd, epoll 등록
-			if (!Register(clientFd))
+			int clientFd = _serverSock->AccpetClient();
+			if (clientFd > 0)
 			{
-				printf("client epoll_ctl() error\n");
-				return;
+				if (SocketUtils::SetNonBlockSocket(clientFd))
+				{
+					// socket fd, epoll 등록
+					if (!Register(clientFd))
+					{
+						printf("client epoll_ctl() error\n");
+						return;
+					}
+				}
+			}
+			else
+			{
+				break;
 			}
 		}
 	}
@@ -45,9 +54,22 @@ void ServerService::ReadClient(int idx)
 	SessionRef session = GetSession(clientFd);
 	if (session != nullptr)
 	{
-		bool isRecv = session->ReciveMessage();
-		if (!isRecv)
-			ReleaseSession(session);
+		while (true)
+		{
+			bool isRecv = session->ReciveMessage();
+			if (isRecv)
+			{
+				if (errno == EAGAIN || errno == EWOULDBLOCK)
+				{
+					break;
+				}
+			}
+			else
+			{
+				ReleaseSession(session);
+				break;
+			}
+		}
 	}
 }
 
