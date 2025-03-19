@@ -23,6 +23,7 @@ void ServerService::AcceptClient(int idx)
 {
 	if (isEpollIn(idx))
 	{
+		// 에지트리거 임시처리
 		while (true)
 		{
 			int clientFd = _serverSock->AccpetClient();
@@ -54,6 +55,7 @@ void ServerService::ReadClient(int idx)
 	SessionRef session = GetSession(clientFd);
 	if (session != nullptr)
 	{
+		// 에지트리거 임시처리
 		while (true)
 		{
 			bool isRecv = session->ReciveMessage();
